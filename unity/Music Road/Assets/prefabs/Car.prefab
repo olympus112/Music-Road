@@ -108,6 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
+  jumpVelocity: 15
   carDimensions: {x: 1.5, y: 1.5, z: 1.5}
 --- !u!54 &-6266495446216094849
 Rigidbody:

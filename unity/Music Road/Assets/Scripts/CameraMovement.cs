@@ -15,8 +15,6 @@ public class CameraMovement : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-        // find player
-
         // rotate camera
         transform.rotation = Quaternion.Euler(rotation);
     }
@@ -26,11 +24,16 @@ public class CameraMovement : MonoBehaviour {
         if (!player) {
             player = FindObjectOfType<Car>();
         } else {
-            playerPosition = FindObjectOfType<Car>().transform.position;
+            playerPosition = player.transform.position;
 
             // verander camera positie
             transform.position = playerPosition + relativeCameraPositionToPlayer;
         }
         
+    }
+
+    public void setPlayer(Car car)
+    {
+        player = car;
     }
 }

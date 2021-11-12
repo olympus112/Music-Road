@@ -7,13 +7,20 @@ public class Car : MonoBehaviour {
     float speed = 5f;
 
     [SerializeField]
+    float jumpVelocity = 10f;
+
+    [SerializeField]
     Vector3 carDimensions = new Vector3(1.5f, 1.5f, 1.5f);
 
     private GameManager gameManager;
     private LevelProgressionMeter slider;
 
+    private Rigidbody ownBody;
+
+    private Vector3 startMousePosition;
     private Vector3 movementdirection;
     private bool goingForward;
+    private bool jumping;
 
     //TODO : get the groundpos automatically here
 
@@ -22,34 +29,55 @@ public class Car : MonoBehaviour {
         gameManager = FindObjectOfType<GameManager>();
         slider = FindObjectOfType<LevelProgressionMeter>();
 
+        ownBody = GetComponent<Rigidbody>();
+
         movementdirection = Vector3.forward;
         goingForward = true;
+        jumping = false;
 
         transform.localScale = carDimensions;
     }
 
     // Update is called once per frame
     void Update() {
-        // move
+        // ------------------- Movement ------------------- 
         float movement = speed * Time.deltaTime;
         transform.position += movementdirection * movement;
         slider.addDistance(movement);
 
+        // ------------------- Input -------------------
+        
         if (Input.GetMouseButtonDown(0))
-            changeDirection();
+            startMousePosition = Input.mousePosition;
 
+        // end of swipe or click
+        if (Input.GetMouseButtonUp(0))
+        {
+            float difference = Input.mousePosition.y - startMousePosition.y;
+            if (difference >= 15)
+                jump();
+            else
+                changeDirection();
+        }
+
+        // ------------------- Death trigger -------------------
         if (transform.position.y < -10) {
-            print(transform.position.y);
             gameManager.endGame(false);
         }
     }
 
     void changeDirection() {
-        // change direction
-        movementdirection = goingForward ? Vector3.right : Vector3.forward;
+            // change direction
+            movementdirection = goingForward ? Vector3.right : Vector3.forward;
 
-        // change boolean
-        goingForward = !goingForward;
+            // change boolean
+            goingForward = !goingForward;
+    }
+
+    void jump() {
+        if (!jumping)
+            ownBody.velocity = new Vector3(0, jumpVelocity, 0);
+        jumping = true;
     }
 
     public Vector3 getStartingPosition(Vector3 startPos) {
@@ -57,7 +85,7 @@ public class Car : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        print(collision.gameObject.transform.name);
+        jumping = false;
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
             FindObjectOfType<GameManager>().endGame(true);
     }
