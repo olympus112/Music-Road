@@ -30,7 +30,7 @@ class AppDataState extends State<AppData> {
       ),
       difficulty: LevelDifficulty.easy,
       scores: const LevelScores(),
-      analytics: LevelAnalytics.unlocked(),
+      analytics: LevelAnalytics.unlocked(score: 200),
     ),
     LevelData(
       song: const SongData(
@@ -42,7 +42,7 @@ class AppDataState extends State<AppData> {
       ),
       difficulty: LevelDifficulty.medium,
       scores: const LevelScores(),
-      analytics: LevelAnalytics.locked(),
+      analytics: LevelAnalytics.locked(score: 300),
     ),
     LevelData(
       song: const SongData(

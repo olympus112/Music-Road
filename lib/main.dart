@@ -14,7 +14,9 @@ class MRApp extends StatelessWidget {
     return MaterialApp(
       home: SafeArea(
         child: Scaffold(
-          body: AppData(builder: (context) => const View()),
+          body: AppData(
+            builder: (context) => const View(),
+          ),
         ),
       ),
     );
