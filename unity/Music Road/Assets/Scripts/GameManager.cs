@@ -12,8 +12,11 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject gameCanvas;
 
-    private int[] testRoads = new int[] {
-            50, 10, 20, 30, 20, 40, 60, 70, 50, 10, 20, 30, 40
+    private int[] testRoads = new int[] { // jump length should be length + 12
+            50, 10, 20, 30, 20, 40, 30, 17, 30, 50, 10, 20, 30, 40
+        };
+    private bool[] testRoadJumpIndicators = new bool[] {
+            false, false, false, false, false, false, false, true, false, false, false, false, false, false
         };
     private bool paused = false;
 
@@ -21,13 +24,11 @@ public class GameManager : MonoBehaviour {
     // Start is called before the first frame update
     // zal voor start uitgevoerd worden
     private void Start() {
-    }
-
-    void Awake() {
         // spawn roads
-        roadSpawner.instantiateRoads(testRoads);
+        roadSpawner.instantiateRoads(testRoads, testRoadJumpIndicators);
         // spawn car
         Car player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
+        FindObjectOfType<CameraMovement>().setPlayer(player);
     }
 
     // Update is called once per frame

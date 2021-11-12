@@ -28,19 +28,24 @@ public class RoadSpawner : MonoBehaviour {
     /// Zorgt dat een reeks van wegen gespanwt worden 
     /// </summary>
     /// <param name="lengths"> Een lijst van alle afstanden van de wegen</param>
-    public void instantiateRoads(int[] lengths) {
+    public void instantiateRoads(int[] lengths, bool[] jumpCheckList) {
         bool xAxis = false;
 
         //bereken y positie (hoogte) van het middelpunt van de weg
         float height = roadSurfaceLevel - (roadHeight / 2);
 
-        Vector3 pos = new Vector3(0, height, 0); // midden positie van de 1ste weg 
 
+        Vector3 pos = new Vector3(0, height, 0); // midden positie van de 1ste weg 
+        int counter = 0;
         foreach (int length in lengths) {
+            
             pos = updateRoadPos(length, pos, xAxis);
-            instantiateRoad(length, xAxis, pos);
+            if (!jumpCheckList[counter]) 
+                instantiateRoad(length, xAxis, pos);
             pos = updateRoadPos(length, pos, xAxis);
-            xAxis = !xAxis; // update directie
+            if (!jumpCheckList[counter] && (counter+1 >= jumpCheckList.Length || !jumpCheckList[counter+1]))
+                xAxis = !xAxis; // update directie
+            counter++;
         }
 
         placeFinnishLine(pos);
