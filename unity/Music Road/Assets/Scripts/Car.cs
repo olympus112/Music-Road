@@ -16,11 +16,13 @@ public class Car : MonoBehaviour {
     private LevelProgressionMeter slider;
 
     private Rigidbody ownBody;
+    private Animator animator;
 
     private Vector3 startMousePosition;
     private Vector3 movementdirection;
     private bool goingForward;
     private bool jumping;
+    private bool ducking;
 
     //TODO : get the groundpos automatically here
 
@@ -30,6 +32,7 @@ public class Car : MonoBehaviour {
         slider = FindObjectOfType<LevelProgressionMeter>();
 
         ownBody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
 
         movementdirection = Vector3.forward;
         goingForward = true;
@@ -56,6 +59,8 @@ public class Car : MonoBehaviour {
             float difference = Input.mousePosition.y - startMousePosition.y;
             if (difference >= 15)
                 jump();
+            else if (difference <= -15)
+                duck();
             else
                 changeDirection();
         }
@@ -74,8 +79,24 @@ public class Car : MonoBehaviour {
             goingForward = !goingForward;
     }
 
+    void duck(){
+        if (jumping)
+            ownBody.velocity = new Vector3(0, -jumpVelocity * 2, 0);
+        else if (!ducking) {
+                animator.SetBool("ducking", true);
+            ducking = true;
+        }
+            
+                
+    }
+
+    void endDucking() { // voor de animatie correct te laten verlopen
+        ducking = false;
+        animator.SetBool("ducking", false);
+    }
+
     void jump() {
-        if (!jumping)
+        if (!jumping && !ducking && transform.position.y >=0.7f)
             ownBody.velocity = new Vector3(0, jumpVelocity, 0);
         jumping = true;
     }
@@ -89,4 +110,6 @@ public class Car : MonoBehaviour {
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
             FindObjectOfType<GameManager>().endGame(true);
     }
+
+
 }

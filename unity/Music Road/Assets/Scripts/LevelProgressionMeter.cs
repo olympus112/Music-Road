@@ -11,7 +11,13 @@ public class LevelProgressionMeter : MonoBehaviour {
     private void Start() {
         slider = GetComponent<Slider>();
         distanceCovered = 0f;
-        totalDistance = FindObjectOfType<GameManager>().getTotalDistance();
+        if (FindObjectOfType<GameInitiator>())
+            totalDistance = FindObjectOfType<GameInitiator>().getTotalDistance();
+
+    }
+
+    public void setTotalDistance(float distance) {
+        totalDistance = distance;
     }
 
     public void addDistance(float distance) {
@@ -19,6 +25,8 @@ public class LevelProgressionMeter : MonoBehaviour {
     }
 
     private void Update() {
-        slider.value = distanceCovered / totalDistance;
+        if (totalDistance > 0f)
+            slider.value = distanceCovered / totalDistance;
+
     }
 }
