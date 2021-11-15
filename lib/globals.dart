@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 class Globals {
+  // Animation
+  static const Duration duration = Duration(milliseconds: 500);
+
+  // Stars
   static const Color starColor = Colors.yellow;
   static const IconData fullStarIcon = Icons.star;
   static const IconData emptyStarIcon = Icons.star_border;
 
+  // Medals
   static const Color noMedalColor = Colors.white24;
   static const IconData noMedalIcon = Icons.circle;
   // https://www.flaticon.com/free-icon/medal_2583344?related_id=2583344&origin=search
@@ -13,4 +18,7 @@ class Globals {
   static const String silverMedalPath = 'images/silver.png';
   // https://www.flaticon.com/free-icon/medal_2583434?related_id=2583434&origin=search
   static const String bronzeMedalPath = 'images/bronze.png';
+
+  // Coins
+  static String coinPath = 'images/coin.png';
 }
