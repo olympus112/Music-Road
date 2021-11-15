@@ -333,7 +333,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ece89df1ff69a8343b233b501419df7f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -370,7 +370,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713191553}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 990, y: 0, z: 990}
+  m_LocalPosition: {x: 990, y: 1, z: 990}
   m_LocalScale: {x: 200, y: 1, z: 200}
   m_Children: []
   m_Father: {fileID: 0}
@@ -591,6 +591,18 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}
+      propertyPath: coin
+      value: 
+      objectReference: {fileID: 6017494888635241632, guid: bae75521f387d824583ff3cdd0e10709,
+        type: 3}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
+      propertyPath: overHang
+      value: 
+      objectReference: {fileID: 7656259266231567358, guid: c9f38fbf3591ffe48b37ec3b399b5d68,
+        type: 3}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
       propertyPath: testRoad
       value: 
       objectReference: {fileID: 859744098393414159, guid: 69502bac91f727e49ac257412ec90c84,
@@ -601,6 +613,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8976629456114892937, guid: 5bbe00e76e299de4dacd34af87f4c593,
         type: 3}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
+      propertyPath: overhangLenght
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1383084002044499418, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}
       propertyPath: m_Name

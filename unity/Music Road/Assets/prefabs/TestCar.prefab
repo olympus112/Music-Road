@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6809490384391627524}
   - component: {fileID: -6266495446216094849}
   - component: {fileID: -5248595662317676900}
+  - component: {fileID: -7053074099884169724}
   m_Layer: 0
   m_Name: TestCar
   m_TagString: Untagged
@@ -126,3 +127,22 @@ MonoBehaviour:
   speed: 15
   jumpVelocity: 10
   carDimensions: {x: 1.5, y: 1.5, z: 1.5}
+--- !u!95 &-7053074099884169724
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6809490384391627525}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7297f561f8268fd469b328fbeb52fee9, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0

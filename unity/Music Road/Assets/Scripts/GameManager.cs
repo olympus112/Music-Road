@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject gameCanvas;
 
-    private bool paused = false;
+    public bool paused = false;
+
 
 
     // Start is called before the first frame update

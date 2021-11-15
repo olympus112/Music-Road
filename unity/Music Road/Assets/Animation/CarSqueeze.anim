@@ -47,6 +47,15 @@ AnimationClip:
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
+        time: 0.6666667
+        value: {x: 2.9537957, y: 0.5502499, z: 2.9509027}
+        inSlope: {x: -0.35771096, y: 0.38903132, z: -0.38010815}
+        outSlope: {x: -0.35771096, y: 0.38903132, z: -0.38010815}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
         time: 0.95
         value: {x: 2.5091207, y: 0.75925934, z: 2.5091207}
         inSlope: {x: -2.8331308, y: 1.0490476, z: -2.7830687}
@@ -137,6 +146,15 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+        time: 0.6666667
+        value: 2.9537957
+        inSlope: -0.35771096
+        outSlope: -0.35771096
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
         time: 0.95
         value: 2.5091207
         inSlope: -2.8331308
@@ -188,6 +206,15 @@ AnimationClip:
         inSlope: 0
         outSlope: 0
         tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.6666667
+        value: 0.5502499
+        inSlope: 0.38903132
+        outSlope: 0.38903132
+        tangentMode: 0
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
@@ -247,6 +274,15 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
+        time: 0.6666667
+        value: 2.9509027
+        inSlope: -0.38010815
+        outSlope: -0.38010815
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
         time: 0.95
         value: 2.5091207
         inSlope: -2.7830687
@@ -275,7 +311,7 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 1.2333333
+  - time: 1
     functionName: endDucking
     data: 
     objectReferenceParameter: {fileID: 0}
