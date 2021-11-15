@@ -370,7 +370,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 713191553}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 990, y: 1, z: 990}
+  m_LocalPosition: {x: 990, y: 3, z: 990}
   m_LocalScale: {x: 200, y: 1, z: 200}
   m_Children: []
   m_Father: {fileID: 0}
@@ -617,6 +617,21 @@ PrefabInstance:
         type: 3}
       propertyPath: overhangLenght
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
+      propertyPath: lengthOfSmallCoinClusters
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
+      propertyPath: frequencyOfBigCoinClusters
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
+      propertyPath: frequencyOfSmallCoinClusters
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1383084002044499418, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}

@@ -46,7 +46,7 @@ public class GameCreator : MonoBehaviour {
     // Start is called before the first frame update
     // zal voor start uitgevoerd worden
     private void Start() {
-        TestCar player = Instantiate(car, car.getStartingPosition(new Vector3(0, 1, 0)), transform.rotation) as TestCar;
+        TestCar player = Instantiate(car, car.getStartingPosition(new Vector3(0, 3, 0)), transform.rotation) as TestCar;
         FindObjectOfType<TestCameraMovement>().setPlayer(player);
         player.setGameCreator(this);
         lastTurnPos = player.transform.position;
@@ -79,7 +79,7 @@ public class GameCreator : MonoBehaviour {
             bigClusterCounter--;
             inSmallCluster = false;
         }
-        else if (roadWidth < availableSpaceForCoins && availableSpaceForCoins < roadWidth * 2) {
+        else if (distanceBetweenCoins < availableSpaceForCoins && availableSpaceForCoins < roadWidth * 2) {
             if (!inSmallCluster && smallClusterLength != 0) { //doe alsof je het einde van de cluster hebt bereikt 
                 smallClusterLength = 0;
             }

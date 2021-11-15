@@ -96,7 +96,7 @@ public class Car : MonoBehaviour {
     }
 
     void jump() {
-        if (!jumping && !ducking && transform.position.y >=0.7f)
+        if (!jumping && transform.position.y >=0.7f)
             ownBody.velocity = new Vector3(0, jumpVelocity, 0);
         jumping = true;
     }
