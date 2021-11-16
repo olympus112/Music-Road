@@ -15,11 +15,15 @@ public class TestCar : MonoBehaviour {
     private GameCreator gc;
 
     private Rigidbody ownBody;
+    private Animator animator;
 
     private Vector3 startMousePosition;
     private Vector3 movementdirection;
+
     private bool goingForward;
     private bool jumping;
+    private bool ducking;
+    private float duckingStartTime;
 
     //TODO : get the groundpos automatically here
 
@@ -27,6 +31,7 @@ public class TestCar : MonoBehaviour {
     void Start() {
 
         ownBody = GetComponent<Rigidbody>();
+        animator = GetComponent<Animator>();
 
         movementdirection = Vector3.forward;
         goingForward = true;
@@ -50,28 +55,57 @@ public class TestCar : MonoBehaviour {
         if (Input.GetMouseButtonUp(0))
         {
             float difference = Input.mousePosition.y - startMousePosition.y;
-            if (difference >= 15)
+            if (difference >= 15){
                 jump();
-            else
+                
+            }
+            else if (difference <= -15) {
+                duck();
+                    
+            }
+            else {
                 changeDirection();
-            gc.createNewRoad(transform.position);
+                
+            }
         }
-
-
     }
 
-    void changeDirection() {
+    void duck()
+    {
+        if (jumping)
+            ownBody.velocity = new Vector3(0, -jumpVelocity * 2, 0);
+        else if (!ducking){
+            gc.createNewOverhang(transform.position);
+            animator.SetBool("ducking", true);
+            ducking = true;
+        }
+    }
+
+    void endDucking()
+    { // voor de animatie correct te laten verlopen
+        ducking = false;
+        animator.SetBool("ducking", false);
+        gc.createNewOverhang(transform.position);
+    }
+
+
+    void changeDirection()
+    {
+        if (!jumping & !ducking) {
             // change direction
             movementdirection = goingForward ? Vector3.right : Vector3.forward;
 
             // change boolean
             goingForward = !goingForward;
+            gc.createNewRoad(transform.position);
+        }
     }
-
     void jump() {
-        if (!jumping)
+        if (!jumping & !ducking) {
+            gc.createNewRoad(transform.position);
             ownBody.velocity = new Vector3(0, jumpVelocity, 0);
-        jumping = true;
+            jumping = true;
+        }
     }
 
     public Vector3 getStartingPosition(Vector3 startPos) {
@@ -79,8 +113,11 @@ public class TestCar : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (jumping)
+        if (jumping) {
+            print( "something");
             gc.updatePos(transform.position);
+        }
+            
         jumping = false;
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
             FindObjectOfType<GameManager>().endGame(true);
