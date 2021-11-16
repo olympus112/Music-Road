@@ -79,7 +79,7 @@ class ViewState extends State<View> {
     return Container(
       key: ValueKey(data.song),
       decoration: BoxDecoration(
-        image: DecorationImage(image: NetworkImage(data.song.cover), fit: BoxFit.cover),
+        image: DecorationImage(image: AssetImage(data.song.cover), fit: BoxFit.cover),
       ),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
