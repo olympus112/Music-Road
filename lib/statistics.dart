@@ -38,7 +38,7 @@ class Statistics extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.network(
+        Image.asset(
           data.levels[info.index].song.cover,
           fit: BoxFit.cover,
           alignment: FractionalOffset(

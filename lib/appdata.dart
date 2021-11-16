@@ -18,7 +18,7 @@ class AppData extends StatefulWidget {
 }
 
 class AppDataState extends State<AppData> {
-  int coins = 500;
+  int coins = 550;
   int currentIndex = 1;
 
   final List<LevelData> levels = [
@@ -30,7 +30,7 @@ class AppDataState extends State<AppData> {
         released: '',
         time: '--:--',
         price: 200,
-        cover: 'https://images.unsplash.com/photo-1534841090574-cba2d662b62e?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZGFyayUyMHNwYWNlfGVufDB8fDB8fA%3D%3D&ixlib=rb-1.2.1&w=1000&q=80',
+        cover: 'images/random.jpg',
         icon: Icons.shuffle,
       ),
       difficulty: LevelDifficulty.none,
@@ -48,7 +48,7 @@ class AppDataState extends State<AppData> {
         album: 'Xscape',
         released: '1985',
         time: '3:57',
-        cover: 'https://images.genius.com/f87ace0306fd27590171c9402315370d.1000x1000x1.jpg',
+        cover: 'images/sttr.jpg',
         price: 300,
       ),
       difficulty: LevelDifficulty.easy,
@@ -66,7 +66,7 @@ class AppDataState extends State<AppData> {
         album: 'Divide',
         released: '2017',
         time: '3:59',
-        cover: 'https://media.s-bol.com/mADWWJA14ZO/550x550.jpg',
+        cover: 'images/dive.jpg',
         price: 400,
       ),
       difficulty: LevelDifficulty.medium,
@@ -84,7 +84,7 @@ class AppDataState extends State<AppData> {
         album: 'Numb',
         released: '2020',
         time: '3:45',
-        cover: 'https://m.media-amazon.com/images/M/MV5BNzMzZGI3ZTAtNjBlNy00NWE0LWEwY2MtZTBhODQ5MjQ1OTEwXkEyXkFqcGdeQXVyNjU1OTg4OTM@._V1_.jpg',
+        cover: 'images/numb.jpg',
         price: 150,
       ),
       difficulty: LevelDifficulty.hard,
