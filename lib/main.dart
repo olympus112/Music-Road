@@ -12,6 +12,12 @@ class MRApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        checkboxTheme: CheckboxThemeData(
+          side: const BorderSide(color: Colors.white70),
+          checkColor: MaterialStateColor.resolveWith((_) => Colors.white70),
+        ),
+      ),
       home: SafeArea(
         child: MediaQuery.fromWindow(
           child: Scaffold(

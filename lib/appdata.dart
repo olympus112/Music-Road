@@ -20,6 +20,9 @@ class AppData extends StatefulWidget {
 class AppDataState extends State<AppData> {
   int coins = 550;
   int currentIndex = 1;
+  double levelVolume = 1.0;
+  double fxVolume = 1.0;
+  bool showTutorial = true;
 
   final List<LevelData> levels = [
     LevelData(
@@ -33,12 +36,12 @@ class AppDataState extends State<AppData> {
         cover: 'images/random.jpg',
         icon: Icons.shuffle,
       ),
-      difficulty: LevelDifficulty.none,
-      scores: const LevelScores(),
-      analytics: LevelAnalytics.unlocked(),
+      difficulty: null,
+      scores: null,
+      statistics: null,
       colors: const LevelColors(
         text: Colors.white,
-        play: Color(0xff2b2a3b),
+        accent: Color(0xff2b2a3b),
       ),
     ),
     LevelData(
@@ -53,10 +56,10 @@ class AppDataState extends State<AppData> {
       ),
       difficulty: LevelDifficulty.easy,
       scores: const LevelScores(),
-      analytics: LevelAnalytics.unlocked(score: 200),
+      statistics: LevelStatistics.unlocked(score: 200),
       colors: const LevelColors(
         text: Colors.white,
-        play: Color(0xffb6c1c3),
+        accent: Color(0xffb6c1c3),
       ),
     ),
     LevelData(
@@ -71,10 +74,10 @@ class AppDataState extends State<AppData> {
       ),
       difficulty: LevelDifficulty.medium,
       scores: const LevelScores(),
-      analytics: LevelAnalytics.locked(score: 300),
+      statistics: LevelStatistics.locked(score: 300),
       colors: const LevelColors(
         text: Colors.white,
-        play: Color(0xff83c1e1),
+        accent: Color(0xff83c1e1),
       ),
     ),
     LevelData(
@@ -89,10 +92,10 @@ class AppDataState extends State<AppData> {
       ),
       difficulty: LevelDifficulty.hard,
       scores: const LevelScores(),
-      analytics: LevelAnalytics.locked(),
+      statistics: LevelStatistics.locked(),
       colors: const LevelColors(
         text: Colors.white,
-        play: Color(0xff910b11),
+        accent: Color(0xff910b11),
       ),
     ),
   ];
@@ -104,8 +107,8 @@ class AppDataState extends State<AppData> {
 
   LevelData get currentLevel => levels[currentIndex];
   SongData get song => currentLevel.song;
-  LevelAnalytics get analytics => currentLevel.analytics;
-  LevelScores get scores => currentLevel.scores;
+  LevelStatistics? get analytics => currentLevel.statistics;
+  LevelScores? get scores => currentLevel.scores;
   LevelColors get colors => currentLevel.colors;
-  LevelDifficulty get difficulty => currentLevel.difficulty;
+  LevelDifficulty? get difficulty => currentLevel.difficulty;
 }

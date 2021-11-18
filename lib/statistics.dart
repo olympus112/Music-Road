@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:musicroad/appdata.dart';
+import 'package:musicroad/view.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
+
+import 'globals.dart';
 
 class Statistics extends StatelessWidget {
   final TransformInfo info;
@@ -17,16 +20,17 @@ class Statistics extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 50),
       child: Material(
         elevation: 4,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: Globals.borderRadius,
         color: Colors.black,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: Globals.borderRadius,
           child: Stack(
             fit: StackFit.expand,
             children: [
               background(context, data),
               filter(context, data),
               content(context, data),
+              close(context, data),
             ],
           ),
         ),
@@ -38,26 +42,15 @@ class Statistics extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Image.asset(
+        ParallaxImage.asset(
           data.levels[info.index].song.cover,
-          fit: BoxFit.cover,
-          alignment: FractionalOffset(
-            0.5 + info.position,
-            0.5,
-          ),
+          position: info.position,
         ),
-        if (data.song.icon != null)
-          Icon(
-            data.song.icon,
-            size: 100,
-            color: Colors.white70,
-          ),
-        if (!data.analytics.unlocked)
-          const Icon(
-            Icons.lock,
-            size: 100,
-            color: Colors.white70,
-          ),
+        Icon(
+          data.analytics?.unlocked == false ? Icons.lock : data.levels[info.index].song.icon,
+          color: Colors.white70,
+          size: 100,
+        ),
       ],
     );
   }
@@ -84,11 +77,11 @@ class Statistics extends StatelessWidget {
               children: [
                 Text('General', style: TextStyle(color: data.colors.text, fontSize: 25)),
                 Divider(color: data.colors.text),
-                Statistic(statistic: 'Score', value: data.analytics.score.toString()),
-                Statistic(statistic: 'Minutes played', value: data.analytics.minutesPlayed.toString()),
-                Statistic(statistic: 'Times played', value: data.analytics.timesPlayed.toString()),
-                Statistic(statistic: 'Times won', value: data.analytics.timesWon.toString()),
-                Statistic(statistic: 'Times lost', value: data.analytics.timesLost.toString()),
+                Statistic(statistic: 'Score', value: data.analytics?.score.toString() ?? '-'),
+                Statistic(statistic: 'Minutes played', value: data.analytics?.secondsPlayed.toString() ?? '-'),
+                Statistic(statistic: 'Times played', value: data.analytics?.timesPlayed.toString() ?? '-'),
+                Statistic(statistic: 'Times won', value: data.analytics?.timesWon.toString() ?? '-'),
+                Statistic(statistic: 'Times lost', value: data.analytics?.timesLost.toString() ?? '-'),
                 const SizedBox(height: 24),
                 Text('Song', style: TextStyle(color: data.colors.text, fontSize: 25)),
                 Divider(color: data.colors.text),
@@ -101,6 +94,16 @@ class Statistics extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget close(BuildContext context, AppDataState data) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: Globals.borderRadius,
+        onTap: () => View.of(context).flipControllers[info.index].toggleCard(),
       ),
     );
   }

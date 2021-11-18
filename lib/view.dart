@@ -3,12 +3,15 @@ import 'dart:ui';
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:musicroad/buy.dart';
+import 'package:musicroad/settings.dart';
 import 'package:musicroad/statistics.dart';
 import 'package:musicroad/utils.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 import 'appdata.dart';
+import 'coins.dart';
 import 'globals.dart';
 import 'level.dart';
 
@@ -17,25 +20,32 @@ class View extends StatefulWidget {
 
   @override
   State<View> createState() => ViewState();
+
+  static ViewState of(BuildContext context) {
+    final state = context.findAncestorStateOfType<ViewState>();
+    assert(state != null);
+
+    return state!;
+  }
 }
 
 class ViewState extends State<View> {
-  late final FlipCardController flipController;
+  late final List<FlipCardController> flipControllers;
 
   Widget? currentTitle;
   Widget? currentBackground;
-  Widget? currentButton;
 
-  final double topFraction = 3 / 25;
-  final double indicatorFraction = 1 / 25;
-  final double bottomFraction = 4 / 25;
+  final double topFraction = 4 / 25;
+  final double indicatorFraction = 2 / 25;
+  final double bottomFraction = 2 / 25;
 
   @override
   void initState() {
-    flipController = FlipCardController();
+    flipControllers = [
+      for (final _ in AppData.of(context).levels) FlipCardController(),
+    ];
 
     currentBackground = getBackground(AppData.of(context));
-    currentButton = getButton(AppData.of(context));
     currentTitle = getTitle(AppData.of(context), false);
 
     super.initState();
@@ -49,11 +59,10 @@ class ViewState extends State<View> {
       child: Stack(
         children: [
           background(context, data),
-          top(context, data),
+          title(context, data),
           coins(context, data),
-          card(context, data),
+          level(context, data),
           indicator(context, data),
-          bottom(context, data),
           settings(context, data),
         ],
       ),
@@ -64,9 +73,9 @@ class ViewState extends State<View> {
     return Text(
       statistics
           ? 'Statistics'
-          : data.analytics.unlocked
-              ? 'Select level'
-              : 'Buy level',
+          : data.analytics?.unlocked == false
+              ? 'Buy level'
+              : 'Select level',
       key: ValueKey({data.analytics, statistics}),
       style: TextStyle(
         fontSize: 30,
@@ -84,49 +93,10 @@ class ViewState extends State<View> {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
         child: Container(
-          decoration: BoxDecoration(color: Colors.black.withOpacity(0.5)),
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.5),
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget getButton(AppDataState data) {
-    return Padding(
-      key: ValueKey(data.song),
-      padding: const EdgeInsets.only(left: 24, right: 24, bottom: 24, top: 8),
-      child: RawMaterialButton(
-        elevation: 0,
-        onPressed: () => data.analytics.unlocked ? onPlay(data) : onBuy(data),
-        shape: const CircleBorder(),
-        child: data.analytics.unlocked
-            ? Icon(
-                Icons.play_arrow,
-                size: 70,
-                color: data.colors.play,
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: data.colors.play),
-                ),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(
-                        Globals.coinPath,
-                        filterQuality: FilterQuality.medium,
-                        height: 18,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${data.song.price}',
-                        style: TextStyle(fontSize: 20, color: data.colors.text),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
       ),
     );
   }
@@ -140,33 +110,19 @@ class ViewState extends State<View> {
 
   Widget coins(BuildContext context, AppDataState data) {
     return Positioned(
-      right: 0,
-      top: 0,
+      right: Globals.viewContentPadding,
+      top: Globals.viewContentPadding,
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              Globals.coinPath,
-              filterQuality: FilterQuality.medium,
-              height: 20,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              data.coins.toString(),
-              style: TextStyle(color: data.colors.text, fontSize: 20),
-            )
-          ],
-        ),
+        child: Coins(coins: data.coins),
       ),
     );
   }
 
   Widget settings(BuildContext context, AppDataState data) {
     return Positioned(
-      left: 0,
-      top: 0,
+      left: Globals.viewContentPadding,
+      top: Globals.viewContentPadding,
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: SizedBox.square(
@@ -185,7 +141,7 @@ class ViewState extends State<View> {
     );
   }
 
-  Widget top(BuildContext context, AppDataState data) {
+  Widget title(BuildContext context, AppDataState data) {
     return Positioned(
       top: 0,
       width: Utils.width(context),
@@ -199,7 +155,7 @@ class ViewState extends State<View> {
     );
   }
 
-  Widget card(BuildContext context, AppDataState data) {
+  Widget level(BuildContext context, AppDataState data) {
     return Positioned(
       width: Utils.width(context),
       height: Utils.height(context),
@@ -210,8 +166,7 @@ class ViewState extends State<View> {
         onPageChanged: (index) => setState(() {
           data.currentIndex = index;
           currentBackground = getBackground(data);
-          currentButton = getButton(data);
-          currentTitle = getTitle(data, false);
+          currentTitle = getTitle(data, flipControllers[index].state?.isFront == false);
         }),
         transformer: PageTransformerBuilder(
           builder: (child, info) {
@@ -220,12 +175,13 @@ class ViewState extends State<View> {
                 top: Utils.height(context, fraction: topFraction),
                 bottom: Utils.height(context, fraction: bottomFraction + indicatorFraction),
               ),
-              child: data.currentIndex == 0
+              child: data.analytics == null
                   ? Level(info: info)
                   : FlipCard(
-                      controller: flipController,
-                      onFlip: () => setState(() {
-                        currentTitle = getTitle(data, flipController.state?.isFront == true);
+                      controller: flipControllers[info.index],
+                      flipOnTouch: false,
+                      onFlipDone: (front) => setState(() {
+                        currentTitle = getTitle(data, front);
                       }),
                       front: Level(info: info),
                       back: Statistics(info: info),
@@ -258,35 +214,53 @@ class ViewState extends State<View> {
     );
   }
 
-  Widget bottom(BuildContext context, AppDataState data) {
-    return Positioned(
-      bottom: 0,
-      width: Utils.width(context),
-      height: Utils.height(context, fraction: bottomFraction),
-      child: Center(
-        child: AnimatedSwitcher(
-          duration: Globals.duration,
-          child: currentButton,
-        ),
-      ),
-    );
-  }
-
   void onPlay(AppDataState data) {
     // Launch unity
+    print('Play');
   }
 
   void onBuy(AppDataState data) {
-    setState(() {
-      if (data.coins >= data.song.price) {
-        data.coins -= data.song.price;
-        data.analytics.unlocked = true;
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: data.colors.accent),
+            borderRadius: Globals.borderRadius,
+          ),
+          child: BuyLevelDialog(
+              data: data,
+              onBuy: () {
+                setState(() {
+                  if (data.coins >= data.song.price) {
+                    data.coins -= data.song.price;
+                    data.analytics?.unlocked = true;
 
-        currentButton = getButton(data);
-        currentTitle = getTitle(data, false);
-      }
-    });
+                    currentTitle = getTitle(data, false);
+                  }
+                });
+              }),
+        );
+      },
+    );
   }
 
-  void onSettings(AppDataState data) {}
+  void buy(AppDataState data) {}
+
+  void onSettings(AppDataState data) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: data.colors.accent),
+            borderRadius: Globals.borderRadius,
+          ),
+          child: SettingsDialog(data: data),
+        );
+      },
+    );
+  }
 }

@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/leveldata.dart';
-import 'package:musicroad/utils.dart';
+import 'package:musicroad/view.dart';
 import 'package:transformer_page_view/parallax.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
+
+import 'coins.dart';
 
 class Level extends StatelessWidget {
   final TransformInfo info;
@@ -19,20 +22,22 @@ class Level extends StatelessWidget {
   Widget build(BuildContext context) {
     final data = AppData.of(context);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50),
+      padding: const EdgeInsets.symmetric(horizontal: Globals.levelSideMargin),
       child: Material(
         elevation: 4,
         color: Colors.black26,
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: Globals.borderRadius,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: Globals.borderRadius,
           child: Stack(
             fit: StackFit.expand,
             children: [
               background(context, data),
-              filter(context, data),
               content(context, data),
-              tapToShow(context, data),
+              stars(context, data),
+              medal(context, data),
+              button(context, data),
+              statistics(context, data),
             ],
           ),
         ),
@@ -40,57 +45,95 @@ class Level extends StatelessWidget {
     );
   }
 
-  Widget tapToShow(BuildContext context, AppDataState data) {
-    return Positioned(
-      bottom: 5,
-      width: Utils.width(context) - 100,
-      child: Text(
-        data.currentIndex != 0 ? 'Tap to show\nstatistics' : '',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: data.colors.text.withOpacity(0.6)),
+  Widget background(BuildContext context, AppDataState data) {
+    return Positioned.fill(
+      child: ParallaxImage.asset(
+        data.levels[info.index].song.cover,
+        position: info.position,
       ),
     );
   }
 
-  Widget background(BuildContext context, AppDataState data) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Image.asset(
-          data.levels[info.index].song.cover,
-          fit: BoxFit.cover,
-          alignment: FractionalOffset(
-            0.5 + info.position,
-            0.5,
+  Widget button(BuildContext context, AppDataState data) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: Globals.borderRadius,
+        onTap: () {
+          if (data.analytics?.unlocked == false)
+            View.of(context).onBuy(data);
+          else
+            View.of(context).onPlay(data);
+        },
+        child: ParallaxContainer(
+          translationFactor: 50,
+          position: info.position,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                data.analytics?.unlocked == false ? Icons.lock : data.levels[info.index].song.icon,
+                color: Colors.white70,
+                size: 100,
+              ),
+              if (data.analytics?.unlocked == false) Coins(coins: data.levels[info.index].song.price),
+            ],
           ),
         ),
-        if (data.song.icon != null)
-          Icon(
-            data.song.icon,
-            color: Colors.white70,
-            size: 100,
-          ),
-        if (!data.analytics.unlocked)
-          const Icon(
-            Icons.lock,
-            color: Colors.white70,
-            size: 100,
-          ),
-      ],
+      ),
     );
   }
 
-  Widget filter(BuildContext context, AppDataState data) {
-    return const DecoratedBox(
-      decoration: BoxDecoration(
-        color: Color(0x00ffffff),
-        gradient: LinearGradient(
-          begin: FractionalOffset.bottomCenter,
-          end: FractionalOffset.topCenter,
-          colors: [
-            Color(0xFF000000),
-            Color(0x00ffffff),
-          ],
+  Widget stars(BuildContext context, AppDataState data) {
+    return Positioned(
+      left: Globals.levelContentPadding,
+      top: Globals.levelContentPadding,
+      child: ParallaxContainer(
+        translationFactor: 200,
+        position: info.position,
+        child: LevelStars(
+          difficulty: data.difficulty,
+        ),
+      ),
+    );
+  }
+
+  Widget medal(BuildContext context, AppDataState data) {
+    return Positioned(
+      left: Globals.levelContentPadding,
+      right: Globals.levelContentPadding,
+      top: Globals.levelContentPadding,
+      child: ParallaxContainer(
+        translationFactor: 200,
+        position: info.position,
+        child: LevelMedal(
+          score: data.levels[info.index].statistics?.score,
+          scores: data.levels[info.index].scores,
+        ),
+      ),
+    );
+  }
+
+  Widget statistics(BuildContext context, AppDataState data) {
+    if (data.levels[info.index].statistics == null) return const SizedBox.shrink();
+
+    return Positioned(
+      right: Globals.levelContentPadding,
+      top: Globals.levelContentPadding,
+      child: ParallaxContainer(
+        translationFactor: 200,
+        position: info.position,
+        child: SizedBox.square(
+          dimension: Globals.infoSize,
+          child: RawMaterialButton(
+            elevation: 1,
+            shape: const CircleBorder(),
+            child: const Icon(
+              Globals.infoIcon,
+              color: Globals.infoColor,
+            ),
+            onPressed: () => View.of(context).flipControllers[info.index].toggleCard(),
+          ),
         ),
       ),
     );
@@ -98,81 +141,60 @@ class Level extends StatelessWidget {
 
   Widget content(BuildContext context, AppDataState data) {
     return Positioned(
+      left: Globals.levelContentPadding,
+      right: Globals.levelContentPadding,
+      bottom: Globals.levelContentPadding,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ParallaxContainer(
             position: info.position,
-            translationFactor: 300,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  LevelStars(difficulty: data.levels[info.index].difficulty),
-                  LevelMedal(
-                    score: data.levels[info.index].analytics.score,
-                    scores: data.levels[info.index].scores,
-                  ),
-                ],
+            translationFactor: 100,
+            child: Text(
+              data.levels[info.index].song.title,
+              style: TextStyle(
+                fontSize: 45,
+                color: data.colors.text,
               ),
             ),
           ),
-          const Expanded(
-            child: SizedBox(),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ParallaxContainer(
-                  position: info.position,
-                  translationFactor: 100,
-                  child: Text(
-                    data.levels[info.index].song.title,
-                    style: const TextStyle(
-                      fontSize: 45,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                ParallaxContainer(
-                  position: info.position,
-                  translationFactor: 200,
-                  child: Text(
-                    data.levels[info.index].song.artist,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const Divider(
-                  color: Colors.white,
-                ),
-                ParallaxContainer(
-                  translationFactor: 300,
-                  position: info.position,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        data.levels[info.index].song.album,
-                        style: const TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                      Text(
-                        data.levels[info.index].song.time,
-                        style: const TextStyle(fontSize: 18, color: Colors.white),
-                      ),
-                    ],
-                  ),
-                )
-              ],
+          ParallaxContainer(
+            position: info.position,
+            translationFactor: 200,
+            child: Text(
+              data.levels[info.index].song.artist,
+              style: TextStyle(
+                fontSize: 20,
+                color: data.levels[info.index].colors.text,
+              ),
             ),
           ),
+          Divider(
+            color: data.levels[info.index].colors.text,
+          ),
+          ParallaxContainer(
+            translationFactor: 300,
+            position: info.position,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  data.levels[info.index].song.album,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: data.levels[info.index].colors.text,
+                  ),
+                ),
+                Text(
+                  data.levels[info.index].song.time,
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: data.levels[info.index].colors.text,
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );
@@ -180,12 +202,14 @@ class Level extends StatelessWidget {
 }
 
 class LevelStars extends StatelessWidget {
-  final LevelDifficulty difficulty;
+  final LevelDifficulty? difficulty;
 
   const LevelStars({Key? key, required this.difficulty}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    if (difficulty == null) return const SizedBox.shrink();
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -207,8 +231,8 @@ class LevelStars extends StatelessWidget {
 }
 
 class LevelMedal extends StatelessWidget {
-  final int score;
-  final LevelScores scores;
+  final int? score;
+  final LevelScores? scores;
 
   const LevelMedal({
     Key? key,
@@ -218,21 +242,23 @@ class LevelMedal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (score < scores.bronze)
+    if (score == null || scores == null) return const SizedBox.shrink();
+
+    if (score! < scores!.bronze)
       return const Icon(
         Globals.noMedalIcon,
         color: Globals.noMedalColor,
-        size: 40,
+        size: Globals.medalSize,
       );
     else
       return Image.asset(
-        score < scores.silver
+        score! < scores!.silver
             ? Globals.bronzeMedalPath
-            : score < scores.gold
+            : score! < scores!.gold
                 ? Globals.silverMedalPath
                 : Globals.goldMedalPath,
         filterQuality: FilterQuality.medium,
-        height: 40,
+        height: Globals.medalSize,
       );
   }
 }
