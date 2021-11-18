@@ -10,7 +10,7 @@ class SettingsDialog extends StatefulWidget {
   final AppDataState data;
   final double heightFraction;
 
-  const SettingsDialog({Key? key, required this.data, this.heightFraction = 0.6}) : super(key: key);
+  const SettingsDialog({Key? key, required this.data, this.heightFraction = 0.7}) : super(key: key);
 
   @override
   State<SettingsDialog> createState() => SettingsDialogState();

@@ -10,7 +10,7 @@ class BuyLevelDialog extends StatelessWidget {
   final void Function() onBuy;
   final double heightFraction;
 
-  const BuyLevelDialog({Key? key, required this.data, required this.onBuy, this.heightFraction = 0.4}) : super(key: key);
+  const BuyLevelDialog({Key? key, required this.data, required this.onBuy, this.heightFraction = 0.5}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

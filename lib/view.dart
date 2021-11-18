@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:musicroad/buy.dart';
 import 'package:musicroad/settings.dart';
 import 'package:musicroad/statistics.dart';
+import 'package:musicroad/unity.dart';
 import 'package:musicroad/utils.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
@@ -215,8 +216,11 @@ class ViewState extends State<View> {
   }
 
   void onPlay(AppDataState data) {
-    // Launch unity
-    print('Play');
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const UnityPlayer(),
+      ),
+    );
   }
 
   void onBuy(AppDataState data) {
@@ -230,17 +234,18 @@ class ViewState extends State<View> {
             borderRadius: Globals.borderRadius,
           ),
           child: BuyLevelDialog(
-              data: data,
-              onBuy: () {
-                setState(() {
-                  if (data.coins >= data.song.price) {
-                    data.coins -= data.song.price;
-                    data.analytics?.unlocked = true;
+            data: data,
+            onBuy: () {
+              setState(() {
+                if (data.coins >= data.song.price) {
+                  data.coins -= data.song.price;
+                  data.analytics?.unlocked = true;
 
-                    currentTitle = getTitle(data, false);
-                  }
-                });
-              }),
+                  currentTitle = getTitle(data, false);
+                }
+              });
+            },
+          ),
         );
       },
     );
