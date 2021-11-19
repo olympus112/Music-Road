@@ -258,13 +258,7 @@ class ViewState extends State<View> {
       context: context,
       barrierColor: Colors.black87,
       builder: (context) {
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: data.colors.accent),
-            borderRadius: Globals.borderRadius,
-          ),
-          child: SettingsDialog(data: data),
-        );
+        return SettingsDialog(data: data);
       },
     );
   }

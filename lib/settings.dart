@@ -2,7 +2,6 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:musicroad/appdata.dart';
-import 'package:musicroad/utils.dart';
 
 import 'globals.dart';
 
@@ -19,12 +18,15 @@ class SettingsDialog extends StatefulWidget {
 class SettingsDialogState extends State<SettingsDialog> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Utils.height(context, fraction: widget.heightFraction),
+    return Padding(
+      padding: const EdgeInsets.all(Globals.levelSideMargin),
       child: Material(
         elevation: 4,
         color: Colors.transparent,
-        borderRadius: Globals.borderRadius,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: widget.data.colors.accent),
+          borderRadius: Globals.borderRadius,
+        ),
         child: ClipRRect(
           borderRadius: Globals.borderRadius,
           child: Stack(

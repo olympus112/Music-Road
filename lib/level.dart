@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:musicroad/appdata.dart';
+import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/leveldata.dart';
 import 'package:musicroad/view.dart';
@@ -59,6 +60,22 @@ class Level extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: Globals.borderRadius,
+        onLongPress: () {
+          showDialog(
+            barrierColor: Colors.black87,
+            context: context,
+            builder: (context) {
+              return GameOverDialog(
+                data: data,
+                level: data.levels[data.currentIndex].song.title,
+                title: 'Game Over',
+                score: 150,
+                percentage: 0.7,
+                coins: 200,
+              );
+            },
+          );
+        },
         onTap: () {
           if (data.analytics?.unlocked == false)
             View.of(context).onBuy(data);
@@ -233,11 +250,15 @@ class LevelStars extends StatelessWidget {
 class LevelMedal extends StatelessWidget {
   final int? score;
   final LevelScores? scores;
+  final double? size;
+  final EdgeInsets padding;
 
   const LevelMedal({
     Key? key,
     required this.score,
     required this.scores,
+    this.size,
+    this.padding = EdgeInsets.zero,
   }) : super(key: key);
 
   @override
@@ -245,20 +266,26 @@ class LevelMedal extends StatelessWidget {
     if (score == null || scores == null) return const SizedBox.shrink();
 
     if (score! < scores!.bronze)
-      return const Icon(
-        Globals.noMedalIcon,
-        color: Globals.noMedalColor,
-        size: Globals.medalSize,
+      return Padding(
+        padding: padding,
+        child: Icon(
+          Globals.noMedalIcon,
+          color: Globals.noMedalColor,
+          size: size ?? Globals.medalSize,
+        ),
       );
     else
-      return Image.asset(
-        score! < scores!.silver
-            ? Globals.bronzeMedalPath
-            : score! < scores!.gold
-                ? Globals.silverMedalPath
-                : Globals.goldMedalPath,
-        filterQuality: FilterQuality.medium,
-        height: Globals.medalSize,
+      return Padding(
+        padding: padding,
+        child: Image.asset(
+          score! < scores!.silver
+              ? Globals.bronzeMedalPath
+              : score! < scores!.gold
+                  ? Globals.silverMedalPath
+                  : Globals.goldMedalPath,
+          filterQuality: FilterQuality.medium,
+          height: size ?? Globals.medalSize,
+        ),
       );
   }
 }

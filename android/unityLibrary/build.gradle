@@ -42,7 +42,7 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
-        profile{
+        profile {
             signingConfig signingConfigs.debug
         }
     }

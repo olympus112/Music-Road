@@ -119,12 +119,28 @@ class BuyLevelDialog extends StatelessWidget {
                       fontSize: 20,
                     ),
                   ),
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.resolveWith(
+                      (states) => const RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.red),
+                        borderRadius: Globals.borderRadius,
+                      ),
+                    ),
+                  ),
                 ),
                 TextButton(
                   onPressed: () {
                     onBuy();
                     Navigator.pop(context);
                   },
+                  style: ButtonStyle(
+                    shape: MaterialStateProperty.resolveWith(
+                      (states) => RoundedRectangleBorder(
+                        side: BorderSide(color: data.colors.accent),
+                        borderRadius: Globals.borderRadius,
+                      ),
+                    ),
+                  ),
                   child: Coins(
                     coins: data.currentLevel.song.price,
                     prefix: 'Buy for',
