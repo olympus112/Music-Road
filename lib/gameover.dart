@@ -9,7 +9,6 @@ import 'package:musicroad/globals.dart';
 import 'package:musicroad/level.dart';
 import 'package:musicroad/leveldata.dart';
 import 'package:musicroad/settings.dart';
-import 'package:musicroad/utils.dart';
 
 class GameOverDialog extends StatelessWidget {
   late final int index;
@@ -35,22 +34,19 @@ class GameOverDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: Utils.height(context, fraction: 0.5),
-      child: Padding(
-        padding: const EdgeInsets.all(Globals.levelSideMargin),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 8,
-              child: card(context, data),
-            ),
-            Expanded(
-              flex: 2,
-              child: buttons(context, data),
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.only(left: Globals.levelSideMargin, right: Globals.levelSideMargin, top: Globals.levelSideMargin),
+      child: Column(
+        children: [
+          Expanded(
+            flex: 8,
+            child: card(context, data),
+          ),
+          Expanded(
+            flex: 2,
+            child: buttons(context, data),
+          ),
+        ],
       ),
     );
   }

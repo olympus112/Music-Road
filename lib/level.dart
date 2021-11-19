@@ -62,6 +62,7 @@ class Level extends StatelessWidget {
         borderRadius: Globals.borderRadius,
         onLongPress: () {
           showDialog(
+            barrierDismissible: false,
             barrierColor: Colors.black87,
             context: context,
             builder: (context) {
