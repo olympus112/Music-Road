@@ -1,7 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:musicroad/appdata.dart';
+import 'package:musicroad/widgets.dart';
 
 import 'globals.dart';
 
@@ -43,24 +42,7 @@ class SettingsDialogState extends State<SettingsDialog> {
   }
 
   Widget background(BuildContext context, AppDataState data) {
-    return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(data.song.cover),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
-            ),
-          ),
-        ),
-      ),
-    );
+    return Widgets.blurredBackground(data.song.cover);
   }
 
   Widget content(BuildContext context, AppDataState data) {
@@ -125,20 +107,10 @@ class SettingsDialogState extends State<SettingsDialog> {
 
   Widget close(BuildContext context, AppDataState data) {
     return Positioned(
-      bottom: Globals.levelContentPadding,
+      bottom: Globals.levelContentPadding * 2,
       left: 0,
       right: 0,
-      child: SizedBox.square(
-        dimension: 80,
-        child: RawMaterialButton(
-          shape: const CircleBorder(),
-          child: Text(
-            'Ok',
-            style: TextStyle(color: data.colors.text, fontSize: Globals.fontSize),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      child: Widgets.button(context, data, Icons.close, data.colors.accent, () => Navigator.pop(context)),
     );
   }
 }

@@ -1,18 +1,15 @@
-import 'dart:ui';
-
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:musicroad/buy.dart';
-import 'package:musicroad/settings.dart';
 import 'package:musicroad/statistics.dart';
 import 'package:musicroad/unity.dart';
 import 'package:musicroad/utils.dart';
+import 'package:musicroad/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
 
 import 'appdata.dart';
-import 'coins.dart';
 import 'globals.dart';
 import 'level.dart';
 
@@ -61,10 +58,10 @@ class ViewState extends State<View> {
         children: [
           background(context, data),
           title(context, data),
-          coins(context, data),
+          Widgets.coins(context, data),
           level(context, data),
           indicator(context, data),
-          settings(context, data),
+          Widgets.settings(context, data, () => Widgets.showSettings(context, data)),
         ],
       ),
     );
@@ -74,10 +71,10 @@ class ViewState extends State<View> {
     return Text(
       statistics
           ? 'Statistics'
-          : data.analytics?.unlocked == false
+          : data.statistics?.unlocked == false
               ? 'Buy level'
               : 'Select level',
-      key: ValueKey({data.analytics, statistics}),
+      key: ValueKey({data.statistics, statistics}),
       style: TextStyle(
         fontSize: 30,
         color: data.colors.text,
@@ -86,59 +83,13 @@ class ViewState extends State<View> {
   }
 
   Widget getBackground(AppDataState data) {
-    return Container(
-      key: ValueKey(data.song),
-      decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(data.song.cover), fit: BoxFit.cover),
-      ),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
-          ),
-        ),
-      ),
-    );
+    return Widgets.blurredBackground(data.song.cover);
   }
 
   Widget background(BuildContext context, AppDataState data) {
     return AnimatedSwitcher(
       duration: Globals.duration,
       child: currentBackground,
-    );
-  }
-
-  Widget coins(BuildContext context, AppDataState data) {
-    return Positioned(
-      right: Globals.viewContentPadding,
-      top: Globals.viewContentPadding,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Coins(coins: data.coins),
-      ),
-    );
-  }
-
-  Widget settings(BuildContext context, AppDataState data) {
-    return Positioned(
-      left: Globals.viewContentPadding,
-      top: Globals.viewContentPadding,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: SizedBox.square(
-          dimension: 24,
-          child: RawMaterialButton(
-            elevation: 0,
-            onPressed: () => onSettings(data),
-            shape: const CircleBorder(),
-            child: Icon(
-              Icons.settings,
-              color: data.colors.text,
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -176,7 +127,7 @@ class ViewState extends State<View> {
                 top: Utils.height(context, fraction: topFraction),
                 bottom: Utils.height(context, fraction: bottomFraction + indicatorFraction),
               ),
-              child: data.analytics == null
+              child: data.statistics == null
                   ? Level(info: info)
                   : FlipCard(
                       controller: flipControllers[info.index],
@@ -239,7 +190,7 @@ class ViewState extends State<View> {
               setState(() {
                 if (data.coins >= data.song.price) {
                   data.coins -= data.song.price;
-                  data.analytics?.unlocked = true;
+                  data.statistics?.unlocked = true;
 
                   currentTitle = getTitle(data, false);
                 }
@@ -247,18 +198,6 @@ class ViewState extends State<View> {
             },
           ),
         );
-      },
-    );
-  }
-
-  void buy(AppDataState data) {}
-
-  void onSettings(AppDataState data) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black87,
-      builder: (context) {
-        return SettingsDialog(data: data);
       },
     );
   }

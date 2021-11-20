@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
-import 'package:musicroad/leveldata.dart';
+import 'package:musicroad/medal.dart';
+import 'package:musicroad/pauze.dart';
+import 'package:musicroad/stars.dart';
 import 'package:musicroad/view.dart';
 import 'package:transformer_page_view/parallax.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
@@ -77,8 +79,40 @@ class Level extends StatelessWidget {
             },
           );
         },
+        onDoubleTap: () {
+          showDialog(
+            barrierDismissible: false,
+            barrierColor: Colors.black87,
+            context: context,
+            builder: (context) {
+              return GameOverDialog(
+                data: data,
+                level: data.levels[data.currentIndex].song.title,
+                title: 'Level completed!',
+                score: 300,
+                percentage: 1,
+                coins: 300,
+              );
+            },
+          );
+        },
+        onTapCancel: () {
+          showDialog(
+            barrierDismissible: false,
+            barrierColor: Colors.black87,
+            context: context,
+            builder: (context) {
+              return PauzeDialog(
+                data: data,
+                level: data.levels[data.currentIndex].song.title,
+                percentage: 0.5,
+                score: 220,
+              );
+            },
+          );
+        },
         onTap: () {
-          if (data.analytics?.unlocked == false)
+          if (data.statistics?.unlocked == false)
             View.of(context).onBuy(data);
           else
             View.of(context).onPlay(data);
@@ -90,11 +124,11 @@ class Level extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                data.analytics?.unlocked == false ? Icons.lock : data.levels[info.index].song.icon,
+                data.statistics?.unlocked == false ? Icons.lock : data.levels[info.index].song.icon,
                 color: Colors.white70,
                 size: 100,
               ),
-              if (data.analytics?.unlocked == false) Coins(coins: data.levels[info.index].song.price),
+              if (data.statistics?.unlocked == false) Coins(coins: data.levels[info.index].song.price),
             ],
           ),
         ),
@@ -216,77 +250,5 @@ class Level extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-class LevelStars extends StatelessWidget {
-  final LevelDifficulty? difficulty;
-
-  const LevelStars({Key? key, required this.difficulty}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (difficulty == null) return const SizedBox.shrink();
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(
-          difficulty != LevelDifficulty.none ? Globals.fullStarIcon : Globals.emptyStarIcon,
-          color: Globals.starColor,
-        ),
-        Icon(
-          difficulty == LevelDifficulty.medium || difficulty == LevelDifficulty.hard ? Globals.fullStarIcon : Globals.emptyStarIcon,
-          color: Globals.starColor,
-        ),
-        Icon(
-          difficulty == LevelDifficulty.hard ? Globals.fullStarIcon : Globals.emptyStarIcon,
-          color: Globals.starColor,
-        ),
-      ],
-    );
-  }
-}
-
-class LevelMedal extends StatelessWidget {
-  final int? score;
-  final LevelScores? scores;
-  final double? size;
-  final EdgeInsets padding;
-
-  const LevelMedal({
-    Key? key,
-    required this.score,
-    required this.scores,
-    this.size,
-    this.padding = EdgeInsets.zero,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (score == null || scores == null) return const SizedBox.shrink();
-
-    if (score! < scores!.bronze)
-      return Padding(
-        padding: padding,
-        child: Icon(
-          Globals.noMedalIcon,
-          color: Globals.noMedalColor,
-          size: size ?? Globals.medalSize,
-        ),
-      );
-    else
-      return Padding(
-        padding: padding,
-        child: Image.asset(
-          score! < scores!.silver
-              ? Globals.bronzeMedalPath
-              : score! < scores!.gold
-                  ? Globals.silverMedalPath
-                  : Globals.goldMedalPath,
-          filterQuality: FilterQuality.medium,
-          height: size ?? Globals.medalSize,
-        ),
-      );
   }
 }

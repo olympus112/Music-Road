@@ -15,6 +15,7 @@ dependencies:
   flutter_unity_widget: ^4.2.3
   transformer_page_view: ^0.1.6
   smooth_page_indicator: ^1.0.0+2
+  confetti: ^0.6.0
 
 dev_dependencies:
   flutter_test:

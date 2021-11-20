@@ -107,7 +107,7 @@ class AppDataState extends State<AppData> {
 
   LevelData get currentLevel => levels[currentIndex];
   SongData get song => currentLevel.song;
-  LevelStatistics? get analytics => currentLevel.statistics;
+  LevelStatistics? get statistics => currentLevel.statistics;
   LevelScores? get scores => currentLevel.scores;
   LevelColors get colors => currentLevel.colors;
   LevelDifficulty? get difficulty => currentLevel.difficulty;
