@@ -1,32 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/leveldata.dart';
+import 'package:musicroad/userdata.dart';
 
-class AppData extends StatefulWidget {
-  final Widget Function(BuildContext) builder;
+import 'globals.dart';
 
-  const AppData({Key? key, required this.builder}) : super(key: key);
-
-  @override
-  State<AppData> createState() => AppDataState();
-
-  static AppDataState of(BuildContext context) {
-    final state = context.findAncestorStateOfType<AppDataState>();
-    assert(state != null);
-
-    return state!;
-  }
-}
-
-class AppDataState extends State<AppData> {
-  int coins = 550;
-  int currentIndex = 1;
-  double levelVolume = 1.0;
-  double fxVolume = 1.0;
-  bool showTutorial = true;
-
-  final List<LevelData> levels = [
+class AppData {
+  static const List<LevelData> levelData = [
     LevelData(
-      song: const SongData(
+      song: SongData(
         title: 'Random',
         artist: '',
         album: '',
@@ -38,14 +20,13 @@ class AppDataState extends State<AppData> {
       ),
       difficulty: null,
       scores: null,
-      statistics: null,
-      colors: const LevelColors(
+      colors: LevelColors(
         text: Colors.white,
         accent: Color(0xff2b2a3b),
       ),
     ),
     LevelData(
-      song: const SongData(
+      song: SongData(
         title: 'Slave to the Rhythm',
         artist: 'Michael Jackson',
         album: 'Xscape',
@@ -55,15 +36,14 @@ class AppDataState extends State<AppData> {
         price: 300,
       ),
       difficulty: LevelDifficulty.easy,
-      scores: const LevelScores(),
-      statistics: LevelStatistics.unlocked(score: 200),
-      colors: const LevelColors(
+      scores: LevelScores(),
+      colors: LevelColors(
         text: Colors.white,
         accent: Color(0xffb6c1c3),
       ),
     ),
     LevelData(
-      song: const SongData(
+      song: SongData(
         title: 'Dive',
         artist: 'Ed Sheeran',
         album: 'Divide',
@@ -73,15 +53,14 @@ class AppDataState extends State<AppData> {
         price: 400,
       ),
       difficulty: LevelDifficulty.medium,
-      scores: const LevelScores(),
-      statistics: LevelStatistics.locked(score: 300),
-      colors: const LevelColors(
+      scores: LevelScores(),
+      colors: LevelColors(
         text: Colors.white,
         accent: Color(0xff83c1e1),
       ),
     ),
     LevelData(
-      song: const SongData(
+      song: SongData(
         title: 'Numb',
         artist: 'Dotan',
         album: 'Numb',
@@ -91,24 +70,39 @@ class AppDataState extends State<AppData> {
         price: 150,
       ),
       difficulty: LevelDifficulty.hard,
-      scores: const LevelScores(),
-      statistics: LevelStatistics.locked(),
-      colors: const LevelColors(
+      scores: LevelScores(),
+      colors: LevelColors(
         text: Colors.white,
         accent: Color(0xff910b11),
       ),
     ),
   ];
 
-  @override
-  Widget build(BuildContext context) {
-    return widget.builder(context);
-  }
+  static List<UserLevelData> defaultUserLevelData = [
+    UserLevelData.unlocked(),
+    UserLevelData.unlocked(),
+    UserLevelData.locked(),
+    UserLevelData.locked(),
+  ];
 
-  LevelData get currentLevel => levels[currentIndex];
-  SongData get song => currentLevel.song;
-  LevelStatistics? get statistics => currentLevel.statistics;
-  LevelScores? get scores => currentLevel.scores;
-  LevelColors get colors => currentLevel.colors;
-  LevelDifficulty? get difficulty => currentLevel.difficulty;
+  static Map<String, dynamic> defaultUserSettingsData = {
+    UserSettingsData.levelVolume: 1.0,
+    UserSettingsData.fxVolume: 1.0,
+    UserSettingsData.showTutorial: true,
+  };
+
+  static Map<String, dynamic> defaultUserData = {
+    UserData.coins: 550,
+  };
+
+  static void init() {
+    final levels = Hive.box<UserLevelData>(Globals.levels);
+    if (levels.isEmpty) levels.addAll(AppData.defaultUserLevelData);
+
+    final settings = Hive.box(Globals.settings);
+    if (settings.isEmpty) settings.putAll(AppData.defaultUserSettingsData);
+
+    final user = Hive.box(Globals.user);
+    if (user.isEmpty) user.putAll(AppData.defaultUserData);
+  }
 }

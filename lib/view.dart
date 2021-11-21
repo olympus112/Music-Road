@@ -1,9 +1,11 @@
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/buy.dart';
 import 'package:musicroad/statistics.dart';
 import 'package:musicroad/unity.dart';
+import 'package:musicroad/userdata.dart';
 import 'package:musicroad/utils.dart';
 import 'package:musicroad/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -30,8 +32,9 @@ class View extends StatefulWidget {
 class ViewState extends State<View> {
   late final List<FlipCardController> flipControllers;
 
-  Widget? currentTitle;
-  Widget? currentBackground;
+  late int currentIndex;
+  late Widget currentTitle;
+  late Widget currentBackground;
 
   final double topFraction = 4 / 25;
   final double indicatorFraction = 2 / 25;
@@ -40,60 +43,61 @@ class ViewState extends State<View> {
   @override
   void initState() {
     flipControllers = [
-      for (final _ in AppData.of(context).levels) FlipCardController(),
+      for (final _ in AppData.levelData) FlipCardController(),
     ];
 
-    currentBackground = getBackground(AppData.of(context));
-    currentTitle = getTitle(AppData.of(context), false);
+    currentIndex = 1;
+    currentTitle = getTitle(false);
+    currentBackground = getBackground();
 
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final data = AppData.of(context);
     return Material(
       color: Colors.black,
       child: Stack(
         children: [
-          background(context, data),
-          title(context, data),
-          Widgets.coins(context, data),
-          level(context, data),
-          indicator(context, data),
-          Widgets.settings(context, data, () => Widgets.showSettings(context, data)),
+          background(),
+          title(context),
+          Widgets.coins(),
+          level(context),
+          indicator(context),
+          Widgets.settings(context, currentIndex),
         ],
       ),
     );
   }
 
-  Widget getTitle(AppDataState data, bool statistics) {
+  Widget getTitle(bool statistics) {
+    bool locked = Hive.box<UserLevelData>(Globals.levels).getAt(currentIndex)?.unlocked == false;
     return Text(
       statistics
           ? 'Statistics'
-          : data.statistics?.unlocked == false
+          : locked
               ? 'Buy level'
               : 'Select level',
-      key: ValueKey({data.statistics, statistics}),
+      key: ValueKey({locked, statistics, currentIndex}),
       style: TextStyle(
         fontSize: 30,
-        color: data.colors.text,
+        color: AppData.levelData[currentIndex].colors.text,
       ),
     );
   }
 
-  Widget getBackground(AppDataState data) {
-    return Widgets.blurredBackground(data.song.cover);
+  Widget getBackground() {
+    return Widgets.blurredBackground(currentIndex);
   }
 
-  Widget background(BuildContext context, AppDataState data) {
+  Widget background() {
     return AnimatedSwitcher(
       duration: Globals.duration,
       child: currentBackground,
     );
   }
 
-  Widget title(BuildContext context, AppDataState data) {
+  Widget title(BuildContext context) {
     return Positioned(
       top: 0,
       width: Utils.width(context),
@@ -107,18 +111,18 @@ class ViewState extends State<View> {
     );
   }
 
-  Widget level(BuildContext context, AppDataState data) {
+  Widget level(BuildContext context) {
     return Positioned(
       width: Utils.width(context),
       height: Utils.height(context),
       child: TransformerPageView(
-        index: data.currentIndex,
+        index: currentIndex,
         loop: true,
-        itemCount: AppData.of(context).levels.length,
+        itemCount: AppData.levelData.length,
         onPageChanged: (index) => setState(() {
-          data.currentIndex = index;
-          currentBackground = getBackground(data);
-          currentTitle = getTitle(data, flipControllers[index].state?.isFront == false);
+          currentIndex = index;
+          currentBackground = getBackground();
+          currentTitle = getTitle(flipControllers[index].state?.isFront == false);
         }),
         transformer: PageTransformerBuilder(
           builder: (child, info) {
@@ -127,13 +131,13 @@ class ViewState extends State<View> {
                 top: Utils.height(context, fraction: topFraction),
                 bottom: Utils.height(context, fraction: bottomFraction + indicatorFraction),
               ),
-              child: data.statistics == null
+              child: AppData.levelData[info.index].scores == null
                   ? Level(info: info)
                   : FlipCard(
                       controller: flipControllers[info.index],
                       flipOnTouch: false,
                       onFlipDone: (front) => setState(() {
-                        currentTitle = getTitle(data, front);
+                        currentTitle = getTitle(front);
                       }),
                       front: Level(info: info),
                       back: Statistics(info: info),
@@ -145,15 +149,15 @@ class ViewState extends State<View> {
     );
   }
 
-  Widget indicator(BuildContext context, AppDataState data) {
+  Widget indicator(BuildContext context) {
     return Positioned(
       width: Utils.width(context),
       height: Utils.height(context, fraction: indicatorFraction),
       bottom: Utils.height(context, fraction: bottomFraction),
       child: Center(
         child: AnimatedSmoothIndicator(
-          activeIndex: data.currentIndex,
-          count: data.levels.length,
+          activeIndex: currentIndex,
+          count: AppData.levelData.length,
           effect: const ScrollingDotsEffect(
             dotWidth: 8,
             dotHeight: 8,
@@ -166,7 +170,7 @@ class ViewState extends State<View> {
     );
   }
 
-  void onPlay(AppDataState data) {
+  void onPlay() {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => const UnityPlayer(),
@@ -174,27 +178,45 @@ class ViewState extends State<View> {
     );
   }
 
-  void onBuy(AppDataState data) {
+  void onBuy() {
     showDialog(
       context: context,
       barrierColor: Colors.black87,
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            side: BorderSide(color: data.colors.accent),
+            side: BorderSide(color: AppData.levelData[currentIndex].colors.accent),
             borderRadius: Globals.borderRadius,
           ),
           child: BuyLevelDialog(
-            data: data,
+            index: currentIndex,
             onBuy: () {
-              setState(() {
-                if (data.coins >= data.song.price) {
-                  data.coins -= data.song.price;
-                  data.statistics?.unlocked = true;
+              final level = Hive.box<UserLevelData>(Globals.levels).getAt(currentIndex)!;
+              final user = Hive.box(Globals.user);
+              final coins = user.get(UserData.coins);
+              final price = AppData.levelData[currentIndex].song.price;
 
-                  currentTitle = getTitle(data, false);
-                }
-              });
+              if (coins >= price) {
+                user.put(UserData.coins, coins - price);
+
+                level.unlocked = true;
+                level.save();
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.black54,
+                    content: Text(
+                      'Insufficient coins',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppData.levelData[currentIndex].colors.accent),
+                    ),
+                  ),
+                );
+              }
+
+              currentTitle = getTitle(false);
+
+              Navigator.pop(context);
             },
           ),
         );

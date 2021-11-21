@@ -1,24 +1,31 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/coins.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/settings.dart';
+import 'package:musicroad/userdata.dart';
 
 class Widgets {
-  static Widget coins(BuildContext context, AppDataState data) {
-    return Positioned(
-      right: Globals.viewContentPadding,
-      top: Globals.viewContentPadding,
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Coins(coins: data.coins),
-      ),
+  static Widget coins() {
+    return ValueListenableBuilder(
+      valueListenable: Hive.box(Globals.user).listenable(),
+      builder: (condtext, Box box, child) {
+        return Positioned(
+          right: Globals.viewContentPadding,
+          top: Globals.viewContentPadding,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Coins(coins: box.get(UserData.coins)),
+          ),
+        );
+      },
     );
   }
 
-  static Widget settings(BuildContext context, AppDataState data, VoidCallback onPressed) {
+  static Widget settings(BuildContext context, int index) {
     return Positioned(
       left: Globals.viewContentPadding,
       top: Globals.viewContentPadding,
@@ -28,11 +35,11 @@ class Widgets {
           dimension: 24,
           child: RawMaterialButton(
             elevation: 0,
-            onPressed: onPressed,
+            onPressed: () => Widgets.showSettings(context, index),
             shape: const CircleBorder(),
             child: Icon(
               Icons.settings,
-              color: data.colors.text,
+              color: AppData.levelData[index].colors.text,
             ),
           ),
         ),
@@ -40,7 +47,8 @@ class Widgets {
     );
   }
 
-  static Widget blurredBackground(String cover, [double sigma = 20]) {
+  static Widget blurredBackground(int index, [double sigma = 20]) {
+    String cover = AppData.levelData[index].song.cover;
     return Container(
       key: ValueKey(cover),
       decoration: BoxDecoration(
@@ -57,7 +65,7 @@ class Widgets {
     );
   }
 
-  static Widget button(BuildContext context, AppDataState data, IconData icon, Color color, VoidCallback onPressed) {
+  static Widget button(IconData icon, Color color, VoidCallback onPressed) {
     return SizedBox.square(
       dimension: 60,
       child: RawMaterialButton(
@@ -74,12 +82,12 @@ class Widgets {
     );
   }
 
-  static void showSettings(BuildContext context, AppDataState data) {
+  static void showSettings(BuildContext context, int index) {
     showDialog(
       context: context,
       barrierColor: Colors.black87,
       builder: (context) {
-        return SettingsDialog(data: data);
+        return SettingsDialog(index: index);
       },
     );
   }

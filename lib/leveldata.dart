@@ -19,33 +19,6 @@ class LevelScores {
   });
 }
 
-class LevelStatistics {
-  bool unlocked;
-  final int score;
-  final int timesPlayed;
-  final int timesLost;
-  final int timesWon;
-  final int secondsPlayed;
-
-  LevelStatistics.locked({
-    this.unlocked = false,
-    this.score = 0,
-    this.timesPlayed = 0,
-    this.timesLost = 0,
-    this.timesWon = 0,
-    this.secondsPlayed = 0,
-  });
-
-  LevelStatistics.unlocked({
-    this.unlocked = true,
-    this.score = 0,
-    this.timesPlayed = 0,
-    this.timesLost = 0,
-    this.timesWon = 0,
-    this.secondsPlayed = 0,
-  });
-}
-
 class SongData {
   final String title;
   final String artist;
@@ -82,14 +55,12 @@ class LevelData {
   final SongData song;
   final LevelScores? scores;
   final LevelDifficulty? difficulty;
-  final LevelStatistics? statistics;
   final LevelColors colors;
 
-  LevelData({
+  const LevelData({
     required this.song,
     required this.scores,
     required this.difficulty,
-    required this.statistics,
     required this.colors,
   });
 }

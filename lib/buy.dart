@@ -6,11 +6,11 @@ import 'coins.dart';
 import 'globals.dart';
 
 class BuyLevelDialog extends StatelessWidget {
-  final AppDataState data;
-  final void Function() onBuy;
+  final int index;
   final double heightFraction;
+  final VoidCallback onBuy;
 
-  const BuyLevelDialog({Key? key, required this.data, required this.onBuy, this.heightFraction = 0.5}) : super(key: key);
+  const BuyLevelDialog({Key? key, required this.index, required this.onBuy, this.heightFraction = 0.5}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,8 @@ class BuyLevelDialog extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              background(context, data),
-              content(context, data),
+              background(),
+              content(context),
             ],
           ),
         ),
@@ -34,7 +34,7 @@ class BuyLevelDialog extends StatelessWidget {
     );
   }
 
-  Widget background(BuildContext context, AppDataState data) {
+  Widget background() {
     return Positioned.fill(
       child: ColorFiltered(
         colorFilter: const ColorFilter.mode(
@@ -42,14 +42,14 @@ class BuyLevelDialog extends StatelessWidget {
           BlendMode.darken,
         ),
         child: Image.asset(
-          data.currentLevel.song.cover,
+          AppData.levelData[index].song.cover,
           fit: BoxFit.cover,
         ),
       ),
     );
   }
 
-  Widget content(BuildContext context, AppDataState data) {
+  Widget content(BuildContext context) {
     return Positioned.fill(
       child: Padding(
         padding: const EdgeInsets.all(Globals.levelContentPadding),
@@ -60,43 +60,43 @@ class BuyLevelDialog extends StatelessWidget {
             Center(
               child: Text(
                 'Buy',
-                style: TextStyle(color: data.colors.text, fontSize: 40),
+                style: TextStyle(color: AppData.levelData[index].colors.text, fontSize: 40),
               ),
             ),
             Divider(
-              color: data.colors.text,
+              color: AppData.levelData[index].colors.text,
               thickness: 1,
             ),
             const SizedBox(height: 16),
             Text(
-              data.currentLevel.song.title,
+              AppData.levelData[index].song.title,
               style: TextStyle(
                 fontSize: 45,
-                color: data.colors.text,
+                color: AppData.levelData[index].colors.text,
               ),
             ),
             Text(
-              data.currentLevel.song.artist,
+              AppData.levelData[index].song.artist,
               style: TextStyle(
                 fontSize: 20,
-                color: data.currentLevel.colors.text,
+                color: AppData.levelData[index].colors.text,
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  data.currentLevel.song.album,
+                  AppData.levelData[index].song.album,
                   style: TextStyle(
                     fontSize: 18,
-                    color: data.currentLevel.colors.text,
+                    color: AppData.levelData[index].colors.text,
                   ),
                 ),
                 Text(
-                  data.currentLevel.song.time,
+                  AppData.levelData[index].song.time,
                   style: TextStyle(
                     fontSize: 18,
-                    color: data.currentLevel.colors.text,
+                    color: AppData.levelData[index].colors.text,
                   ),
                 ),
               ],
@@ -104,7 +104,7 @@ class BuyLevelDialog extends StatelessWidget {
             const SizedBox(height: 16),
             Divider(
               height: 16,
-              color: data.colors.text,
+              color: AppData.levelData[index].colors.text,
               thickness: 1,
             ),
             Row(
@@ -129,20 +129,17 @@ class BuyLevelDialog extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    onBuy();
-                    Navigator.pop(context);
-                  },
+                  onPressed: onBuy,
                   style: ButtonStyle(
                     shape: MaterialStateProperty.resolveWith(
                       (states) => RoundedRectangleBorder(
-                        side: BorderSide(color: data.colors.accent),
+                        side: BorderSide(color: AppData.levelData[index].colors.accent),
                         borderRadius: Globals.borderRadius,
                       ),
                     ),
                   ),
                   child: Coins(
-                    coins: data.currentLevel.song.price,
+                    coins: AppData.levelData[index].song.price,
                     prefix: 'Buy for',
                   ),
                 ),

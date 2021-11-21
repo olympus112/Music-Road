@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
+import 'package:musicroad/globals.dart';
+import 'package:musicroad/userdata.dart';
+import 'package:musicroad/userdata_adapter.dart';
 import 'package:musicroad/view.dart';
 
-void main() {
-  runApp(const MRApp());
+void main() async {
+  await Hive.initFlutter();
+  Hive.registerAdapter(UserLevelDataAdapter());
+
+  await Hive.openBox(Globals.settings);
+  await Hive.openBox(Globals.user);
+  await Hive.openBox<UserLevelData>(Globals.levels);
+
+  AppData.init();
+
+  runApp(const App());
 }
 
-class MRApp extends StatelessWidget {
-  const MRApp({Key? key}) : super(key: key);
+class App extends StatelessWidget {
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +33,8 @@ class MRApp extends StatelessWidget {
       ),
       home: SafeArea(
         child: MediaQuery.fromWindow(
-          child: Scaffold(
-            body: AppData(
-              builder: (context) => const View(),
-            ),
+          child: const Scaffold(
+            body: View(),
           ),
         ),
       ),

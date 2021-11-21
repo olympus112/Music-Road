@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/medal.dart';
 import 'package:musicroad/pauze.dart';
 import 'package:musicroad/stars.dart';
+import 'package:musicroad/userdata.dart';
 import 'package:musicroad/view.dart';
 import 'package:transformer_page_view/parallax.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
@@ -23,7 +25,6 @@ class Level extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = AppData.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: Globals.levelSideMargin),
       child: Material(
@@ -35,12 +36,12 @@ class Level extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              background(context, data),
-              content(context, data),
-              stars(context, data),
-              medal(context, data),
-              button(context, data),
-              statistics(context, data),
+              background(),
+              content(context),
+              stars(),
+              medal(),
+              button(context),
+              statistics(context),
             ],
           ),
         ),
@@ -48,16 +49,16 @@ class Level extends StatelessWidget {
     );
   }
 
-  Widget background(BuildContext context, AppDataState data) {
+  Widget background() {
     return Positioned.fill(
       child: ParallaxImage.asset(
-        data.levels[info.index].song.cover,
+        AppData.levelData[info.index].song.cover,
         position: info.position,
       ),
     );
   }
 
-  Widget button(BuildContext context, AppDataState data) {
+  Widget button(BuildContext context) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -69,8 +70,7 @@ class Level extends StatelessWidget {
             context: context,
             builder: (context) {
               return GameOverDialog(
-                data: data,
-                level: data.levels[data.currentIndex].song.title,
+                index: info.index,
                 title: 'Game Over',
                 score: 150,
                 percentage: 0.7,
@@ -86,8 +86,7 @@ class Level extends StatelessWidget {
             context: context,
             builder: (context) {
               return GameOverDialog(
-                data: data,
-                level: data.levels[data.currentIndex].song.title,
+                index: info.index,
                 title: 'Level completed!',
                 score: 300,
                 percentage: 1,
@@ -103,8 +102,8 @@ class Level extends StatelessWidget {
             context: context,
             builder: (context) {
               return PauzeDialog(
-                data: data,
-                level: data.levels[data.currentIndex].song.title,
+                index: info.index,
+                level: AppData.levelData[info.index].song.title,
                 percentage: 0.5,
                 score: 220,
               );
@@ -112,31 +111,37 @@ class Level extends StatelessWidget {
           );
         },
         onTap: () {
-          if (data.statistics?.unlocked == false)
-            View.of(context).onBuy(data);
+          if (Hive.box<UserLevelData>(Globals.levels).getAt(info.index)?.unlocked == false)
+            View.of(context).onBuy();
           else
-            View.of(context).onPlay(data);
+            View.of(context).onPlay();
         },
         child: ParallaxContainer(
           translationFactor: 50,
           position: info.position,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                data.statistics?.unlocked == false ? Icons.lock : data.levels[info.index].song.icon,
-                color: Colors.white70,
-                size: 100,
-              ),
-              if (data.statistics?.unlocked == false) Coins(coins: data.levels[info.index].song.price),
-            ],
+          child: ValueListenableBuilder(
+            valueListenable: Hive.box<UserLevelData>(Globals.levels).listenable(),
+            builder: (context, Box<UserLevelData> box, child) {
+              bool locked = box.getAt(info.index)?.unlocked == false;
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    locked ? Icons.lock : AppData.levelData[info.index].song.icon,
+                    color: Colors.white70,
+                    size: 100,
+                  ),
+                  if (locked) Coins(coins: AppData.levelData[info.index].song.price),
+                ],
+              );
+            },
           ),
         ),
       ),
     );
   }
 
-  Widget stars(BuildContext context, AppDataState data) {
+  Widget stars() {
     return Positioned(
       left: Globals.levelContentPadding,
       top: Globals.levelContentPadding,
@@ -144,13 +149,13 @@ class Level extends StatelessWidget {
         translationFactor: 200,
         position: info.position,
         child: LevelStars(
-          difficulty: data.difficulty,
+          difficulty: AppData.levelData[info.index].difficulty,
         ),
       ),
     );
   }
 
-  Widget medal(BuildContext context, AppDataState data) {
+  Widget medal() {
     return Positioned(
       left: Globals.levelContentPadding,
       right: Globals.levelContentPadding,
@@ -158,16 +163,21 @@ class Level extends StatelessWidget {
       child: ParallaxContainer(
         translationFactor: 200,
         position: info.position,
-        child: LevelMedal(
-          score: data.levels[info.index].statistics?.score,
-          scores: data.levels[info.index].scores,
+        child: ValueListenableBuilder(
+          valueListenable: Hive.box<UserLevelData>(Globals.levels).listenable(),
+          builder: (context, Box<UserLevelData> box, child) {
+            return LevelMedal(
+              score: box.getAt(info.index)?.score,
+              scores: AppData.levelData[info.index].scores,
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget statistics(BuildContext context, AppDataState data) {
-    if (data.levels[info.index].statistics == null) return const SizedBox.shrink();
+  Widget statistics(BuildContext context) {
+    if (AppData.levelData[info.index].scores == null) return const SizedBox.shrink();
 
     return Positioned(
       right: Globals.levelContentPadding,
@@ -191,7 +201,7 @@ class Level extends StatelessWidget {
     );
   }
 
-  Widget content(BuildContext context, AppDataState data) {
+  Widget content(BuildContext context) {
     return Positioned(
       left: Globals.levelContentPadding,
       right: Globals.levelContentPadding,
@@ -203,10 +213,10 @@ class Level extends StatelessWidget {
             position: info.position,
             translationFactor: 100,
             child: Text(
-              data.levels[info.index].song.title,
+              AppData.levelData[info.index].song.title,
               style: TextStyle(
                 fontSize: 45,
-                color: data.colors.text,
+                color: AppData.levelData[info.index].colors.text,
               ),
             ),
           ),
@@ -214,15 +224,15 @@ class Level extends StatelessWidget {
             position: info.position,
             translationFactor: 200,
             child: Text(
-              data.levels[info.index].song.artist,
+              AppData.levelData[info.index].song.artist,
               style: TextStyle(
                 fontSize: 20,
-                color: data.levels[info.index].colors.text,
+                color: AppData.levelData[info.index].colors.text,
               ),
             ),
           ),
           Divider(
-            color: data.levels[info.index].colors.text,
+            color: AppData.levelData[info.index].colors.text,
           ),
           ParallaxContainer(
             translationFactor: 300,
@@ -231,17 +241,17 @@ class Level extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  data.levels[info.index].song.album,
+                  AppData.levelData[info.index].song.album,
                   style: TextStyle(
                     fontSize: 18,
-                    color: data.levels[info.index].colors.text,
+                    color: AppData.levelData[info.index].colors.text,
                   ),
                 ),
                 Text(
-                  data.levels[info.index].song.time,
+                  AppData.levelData[info.index].song.time,
                   style: TextStyle(
                     fontSize: 18,
-                    color: data.levels[info.index].colors.text,
+                    color: AppData.levelData[info.index].colors.text,
                   ),
                 ),
               ],

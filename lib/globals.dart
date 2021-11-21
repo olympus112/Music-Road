@@ -36,5 +36,10 @@ class Globals {
   static const double infoSize = 24;
 
   // Coins
-  static String coinPath = 'images/coin.png';
+  static const String coinPath = 'images/coin.png';
+
+  // Boxes
+  static const String settings = 'settings';
+  static const String user = 'user';
+  static const String levels = 'levels';
 }
