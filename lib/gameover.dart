@@ -116,7 +116,7 @@ class GameOverDialog extends StatelessWidget {
                 );
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Text(
               'Score: $score',
               style: TextStyle(
@@ -126,7 +126,7 @@ class GameOverDialog extends StatelessWidget {
             ),
             Coins(
               coins: coins,
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.all(16),
             ),
             LevelProgress(
               score: score,
