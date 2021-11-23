@@ -17,11 +17,13 @@ void main() async {
 
   AppData.init();
 
-  runApp(const App());
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  static final Widget unity = UnityPlayer(levelIndex: 1);
+
+  App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +37,8 @@ class App extends StatelessWidget {
       routes: {
         '/': (context) => const View(),
         '/unity': (context) {
-          return Builder(
-            builder: (context) => UnityPlayer(levelIndex: ModalRoute.of(context)!.settings.arguments as int),
-          );
-        },
+          return unity;
+        }
       },
       builder: (context, child) => SafeArea(
         child: MediaQuery.fromWindow(

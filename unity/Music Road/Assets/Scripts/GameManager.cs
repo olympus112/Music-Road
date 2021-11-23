@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,7 +26,8 @@ public class GameManager : MonoBehaviour {
         messenger = GetComponent<UnityMessageManager>();
         audioSource = GetComponent<AudioSource>();
 
-        Restart();
+        Time.timeScale = 0;
+        paused = true;
     }
 
     private void Restart() {
@@ -35,10 +35,6 @@ public class GameManager : MonoBehaviour {
         paused = false;
         coins = 0;
         
-        if (player != null)
-            Destroy(player.gameObject);
-        
-
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
 
@@ -52,7 +48,7 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 0;
         paused = true;
         
-        /*LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         double percentage = meter.distanceCovered / meter.totalDistance;
         print("Meter found " + meter);
         
@@ -64,7 +60,9 @@ public class GameManager : MonoBehaviour {
         };
         
         var message = JsonConvert.SerializeObject(parameters);
-        messenger.SendMessageToFlutter(message);*/
+        messenger.SendMessageToFlutter(message);
+        
+        Destroy(player.gameObject);
     }
 
     // Called from Unity
@@ -80,9 +78,7 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 0;
         paused = true;
         
-        Restart();
-        
-        /*LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         print("Meter found " + meter);
         double percentage = meter.distanceCovered / meter.totalDistance;
         Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
@@ -92,7 +88,7 @@ public class GameManager : MonoBehaviour {
         };
 
         var message = JsonConvert.SerializeObject(parameters);
-        messenger.SendMessageToFlutter(message);*/
+        messenger.SendMessageToFlutter(message);
     }
     
     // Called from Flutter
@@ -109,17 +105,14 @@ public class GameManager : MonoBehaviour {
     public void startGame(string message) {
         print("Unity::startLevel " + message);
 
-        //Restart();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
+        Restart();
     }
 
     // Called from Flutter
     public void restartGame(string message) {
         print("Unity::restartGame");
 
-        //Restart();
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        Restart();
     }
 
     public void addCoin() {

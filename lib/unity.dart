@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
@@ -11,8 +10,8 @@ class UnityPlayer extends StatefulWidget {
   late final int levelIndex;
 
   UnityPlayer({Key? key, required this.levelIndex}) : super(key: key) {
-    print('Created unity player level:$levelIndex');
-    if (levelIndex == 0) levelIndex = 1 + Random.secure().nextInt(2);
+    // print('Created unity player level:$levelIndex');
+    // if (levelIndex == 0) levelIndex = 1 + Random.secure().nextInt(2);
   }
 
   @override
@@ -29,7 +28,7 @@ class UnityPlayerState extends State<UnityPlayer> {
 
   @override
   void dispose() {
-    controller.dispose();
+    //controller.dispose();
 
     super.dispose();
   }
