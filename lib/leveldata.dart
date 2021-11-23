@@ -13,36 +13,9 @@ class LevelScores {
   final int gold;
 
   const LevelScores({
-    this.bronze = 100,
-    this.silver = 200,
-    this.gold = 300,
-  });
-}
-
-class LevelAnalytics {
-  bool unlocked;
-  final int score;
-  final int timesPlayed;
-  final int timesLost;
-  final int timesWon;
-  final int minutesPlayed;
-
-  LevelAnalytics.locked({
-    this.unlocked = false,
-    this.score = 0,
-    this.timesPlayed = 0,
-    this.timesLost = 0,
-    this.timesWon = 0,
-    this.minutesPlayed = 0,
-  });
-
-  LevelAnalytics.unlocked({
-    this.unlocked = true,
-    this.score = 0,
-    this.timesPlayed = 0,
-    this.timesLost = 0,
-    this.timesWon = 0,
-    this.minutesPlayed = 0,
+    this.bronze = 500,
+    this.silver = 700,
+    this.gold = 1000,
   });
 }
 
@@ -64,32 +37,30 @@ class SongData {
     required this.time,
     required this.cover,
     required this.price,
-    this.icon,
+    this.icon = Icons.play_arrow,
   });
 }
 
 class LevelColors {
   final Color text;
-  final Color play;
+  final Color accent;
 
   const LevelColors({
     required this.text,
-    required this.play,
+    required this.accent,
   });
 }
 
 class LevelData {
   final SongData song;
-  final LevelScores scores;
-  final LevelDifficulty difficulty;
-  final LevelAnalytics analytics;
+  final LevelScores? scores;
+  final LevelDifficulty? difficulty;
   final LevelColors colors;
 
-  LevelData({
+  const LevelData({
     required this.song,
     required this.scores,
     required this.difficulty,
-    required this.analytics,
     required this.colors,
   });
 }

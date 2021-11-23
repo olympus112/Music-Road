@@ -11,7 +11,7 @@ public class Coin : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        //gm.addCoin();
+        FindObjectOfType<GameManager>().addCoin();
         GameObject.Destroy(gameObject);
     }
 

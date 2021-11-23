@@ -167,9 +167,4 @@ public class GameCreator : MonoBehaviour {
             lastTurnPos = pos;
         }
     }
-
-    public void endGame(bool won) {
-        print("game won = " + won);
-        FindObjectOfType<LevelLoader>().reloadScene();
-    }
 }

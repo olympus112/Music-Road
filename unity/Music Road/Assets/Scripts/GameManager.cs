@@ -1,6 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     [SerializeField]
@@ -9,53 +10,119 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject gameCanvas;
 
+
     public bool recentleyPaused;
 
-    public bool paused = false;
     private AudioSource audioSource;
     private Car player;
 
 
-
-    // Start is called before the first frame update
-    // zal voor start uitgevoerd worden
+    private static UnityMessageManager messenger;
+    public int coins;
+    public bool paused;
+    
     private void Start() {
-        paused = false;
-        recentleyPaused = true;
+        print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
+        
+        messenger = GetComponent<UnityMessageManager>();
         audioSource = GetComponent<AudioSource>();
 
-        // spawn car
+        Restart();
+    }
+
+    private void Restart() {
+        Time.timeScale = 1;
+        paused = false;
+        coins = 0;
+        
+        if (player != null)
+            Destroy(player.gameObject);
+        
+
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
 
 
     }
+    
+    // Called from Unity
+    public void endGame() {
+        print("Unity::endLevel");
+        
+        Time.timeScale = 0;
+        paused = true;
+        
+        /*LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        double percentage = meter.distanceCovered / meter.totalDistance;
+        print("Meter found " + meter);
+        
+        Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
+            {"action", "stop"},
+            {"percentage", percentage},
+            {"score", percentage * 1000},
+            {"coins", coins}
+        };
+        
+        var message = JsonConvert.SerializeObject(parameters);
+        messenger.SendMessageToFlutter(message);*/
+    }
 
-    // TODO kan je dan nog altijd klikken om van richting te veranderen?
+    // Called from Unity
     public void pauseGame() {
-        if (!paused)
-            player.revertPausedClick();
 
-        print("paused");
-        Time.timeScale = paused ? 1 : 0;
-
-        if (!paused)
-            audioSource.Pause();
-        else{
-            audioSource.Play(0);
-        }
+        
+        audioSource.Pause();
             
 
         paused = !paused;
+        print("Unity::pauzeLevel");
+        
+        Time.timeScale = 0;
+        paused = true;
+        
+        Restart();
+        
+        /*LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        print("Meter found " + meter);
+        double percentage = meter.distanceCovered / meter.totalDistance;
+        Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
+            {"action", "pauze"},
+            {"percentage", percentage},
+            {"score", percentage * 1000}
+        };
+
+        var message = JsonConvert.SerializeObject(parameters);
+        messenger.SendMessageToFlutter(message);*/
+    }
+    
+    // Called from Flutter
+    public void resumeGame(string message) {
+        print("Unity::resumeLevel");
+        
+        audioSource.Play(0);
+
+        Time.timeScale = 1;
+        paused = false;
     }
 
-    public void addCoin()
-    {
-        print("added coin");
+    // Called from Flutter
+    public void startGame(string message) {
+        print("Unity::startLevel " + message);
+
+        //Restart();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
     }
 
-    public void endGame(bool won) {
-        print("game won = " + won);
-        FindObjectOfType<LevelLoader>().reloadScene();
+    // Called from Flutter
+    public void restartGame(string message) {
+        print("Unity::restartGame");
+
+        //Restart();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void addCoin() {
+        coins++;
     }
 }

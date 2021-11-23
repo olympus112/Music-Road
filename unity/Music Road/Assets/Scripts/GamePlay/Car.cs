@@ -23,6 +23,7 @@ public class Car : MonoBehaviour {
     private bool goingForward;
     private bool jumping;
     private bool ducking;
+    private bool gameEnded;
 
 
     //TODO : get the groundpos automatically here
@@ -40,6 +41,7 @@ public class Car : MonoBehaviour {
         movementdirection = Vector3.forward;
         goingForward = true;
         jumping = false;
+        gameEnded = false;
 
         transform.localScale = carDimensions;
     }
@@ -72,19 +74,18 @@ public class Car : MonoBehaviour {
         }
 
         // ------------------- Death trigger -------------------
-        if (transform.position.y < -10) {
-            gameManager.endGame(false);
+        if (transform.position.y < -10 && !gameEnded) {
+            gameEnded = true;
+            gameManager.endGame();
         }
     }
 
     void changeDirection() {
-        print("change: " + goingForward);
         // change direction
         movementdirection = goingForward ? Vector3.right : Vector3.forward;
 
         // change boolean
         goingForward = !goingForward;
-        print("changed: " + goingForward);
     }
 
     void duck(){
@@ -114,7 +115,7 @@ public class Car : MonoBehaviour {
     private void OnCollisionEnter(Collision collision) {
         jumping = false;
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
-            FindObjectOfType<GameManager>().endGame(true);
+            FindObjectOfType<GameManager>().endGame();
     }
 
     public void revertPausedClick() {
