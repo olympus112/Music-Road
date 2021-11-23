@@ -21,7 +21,7 @@ void main() async {
 }
 
 class App extends StatelessWidget {
-  static final Widget unity = UnityPlayer(levelIndex: 1);
+  static GlobalKey<UnityPlayerState> unity = GlobalKey<UnityPlayerState>();
 
   App({Key? key}) : super(key: key);
 
@@ -35,10 +35,8 @@ class App extends StatelessWidget {
         ),
       ),
       routes: {
-        '/': (context) => const View(),
-        '/unity': (context) {
-          return unity;
-        }
+        '/': (context) => UnityPlayer(key: unity, levelIndex: 1),
+        '/menu': (context) => const View(),
       },
       builder: (context, child) => SafeArea(
         child: MediaQuery.fromWindow(

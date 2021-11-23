@@ -1,5 +1,6 @@
 -keep class bitter.jnibridge.* { *; }
 -keep class com.unity3d.player.* { *; }
+-keep class com.xraph.plugin.** {*;}
 -keep interface com.unity3d.player.IUnityPlayerLifecycleEvents { *; }
 -keep class org.fmod.* { *; }
 -keep class com.google.androidgamesdk.ChoreographerCallback { *; }

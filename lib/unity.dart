@@ -7,15 +7,19 @@ import 'package:musicroad/gameover.dart';
 import 'package:musicroad/pauze.dart';
 
 class UnityPlayer extends StatefulWidget {
-  late final int levelIndex;
+  final int levelIndex;
 
-  UnityPlayer({Key? key, required this.levelIndex}) : super(key: key) {
-    // print('Created unity player level:$levelIndex');
-    // if (levelIndex == 0) levelIndex = 1 + Random.secure().nextInt(2);
-  }
+  const UnityPlayer({Key? key, required this.levelIndex}) : super(key: key);
 
   @override
   State<UnityPlayer> createState() => UnityPlayerState();
+
+  static UnityPlayerState of(BuildContext context) {
+    final state = context.findAncestorStateOfType<UnityPlayerState>();
+    assert(state != null);
+
+    return state!;
+  }
 }
 
 class UnityPlayerState extends State<UnityPlayer> {
@@ -28,7 +32,7 @@ class UnityPlayerState extends State<UnityPlayer> {
 
   @override
   void dispose() {
-    //controller.dispose();
+    controller.dispose();
 
     super.dispose();
   }
@@ -38,15 +42,15 @@ class UnityPlayerState extends State<UnityPlayer> {
     return UnityWidget(
       onUnityUnloaded: onUnityUnloaded,
       onUnityMessage: (message) => onUnityMessage(context, message),
-      onUnityCreated: onUnityCreated,
-      onUnitySceneLoaded: onUnitySceneLoaded,
+      onUnityCreated: (controller) => onUnityCreated(context, controller),
+      onUnitySceneLoaded: (scene) => onUnitySceneLoaded(context, scene),
       borderRadius: BorderRadius.zero,
     );
   }
 
-  void onUnityCreated(UnityWidgetController controller) {
+  void onUnityCreated(BuildContext context, UnityWidgetController controller) {
     this.controller = controller;
-    startLevel(widget.levelIndex);
+    Navigator.pushNamed(context, '/menu');
   }
 
   void onUnityMessage(BuildContext context, dynamic message) {
@@ -67,8 +71,7 @@ class UnityPlayerState extends State<UnityPlayer> {
             score: (json['score'] as double).round(),
             percentage: json['percentage'] as double,
             onMenu: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.popAndPushNamed(context, '/menu');
             },
             onReplay: () {
               Navigator.pop(context);
@@ -94,8 +97,7 @@ class UnityPlayerState extends State<UnityPlayer> {
             coins: json['coins'] as int,
             percentage: json['percentage'] as double,
             onMenu: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.popAndPushNamed(context, '/menu');
             },
             onReplay: () {
               Navigator.pop(context);
@@ -107,7 +109,7 @@ class UnityPlayerState extends State<UnityPlayer> {
     }
   }
 
-  void onUnitySceneLoaded(SceneLoaded? scene) {
+  void onUnitySceneLoaded(BuildContext context, SceneLoaded? scene) {
     print('Loaded: ${scene?.name}, ${scene?.buildIndex}, ${scene?.isValid}');
   }
 
