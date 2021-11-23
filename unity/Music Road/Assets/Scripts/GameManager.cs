@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,18 +10,28 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject gameCanvas;
 
+    private Car player;
     private static UnityMessageManager messenger;
     public int coins;
     public bool paused;
     
     private void Start() {
+        print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
+        
         messenger = GetComponent<UnityMessageManager>();
+
+        Restart();
+    }
+
+    private void Restart() {
         Time.timeScale = 1;
         paused = false;
         coins = 0;
-
-        // spawn car
-        Car player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
+        
+        if (player != null)
+            Destroy(player.gameObject);
+        
+        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
     }
     
@@ -31,7 +39,10 @@ public class GameManager : MonoBehaviour {
     public void endGame() {
         print("Unity::endLevel");
         
-        LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        Time.timeScale = 0;
+        paused = true;
+        
+        /*LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         double percentage = meter.distanceCovered / meter.totalDistance;
         print("Meter found " + meter);
         
@@ -43,17 +54,7 @@ public class GameManager : MonoBehaviour {
         };
         
         var message = JsonConvert.SerializeObject(parameters);
-        messenger.SendMessageToFlutter(message);
-
-        SceneManager.LoadScene(0);
-    }
-
-    // Called from Flutter
-    public void resumeGame(string message) {
-        print("Unity::resumeLevel");
-        
-        Time.timeScale = 1;
-        paused = false;
+        messenger.SendMessageToFlutter(message);*/
     }
 
     // Called from Unity
@@ -63,7 +64,9 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 0;
         paused = true;
         
-        LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        Restart();
+        
+        /*LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         print("Meter found " + meter);
         double percentage = meter.distanceCovered / meter.totalDistance;
         Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
@@ -73,7 +76,32 @@ public class GameManager : MonoBehaviour {
         };
 
         var message = JsonConvert.SerializeObject(parameters);
-        messenger.SendMessageToFlutter(message);
+        messenger.SendMessageToFlutter(message);*/
+    }
+    
+    // Called from Flutter
+    public void resumeGame(string message) {
+        print("Unity::resumeLevel");
+        
+        Time.timeScale = 1;
+        paused = false;
+    }
+
+    // Called from Flutter
+    public void startGame(string message) {
+        print("Unity::startLevel " + message);
+
+        //Restart();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+    }
+
+    // Called from Flutter
+    public void restartGame(string message) {
+        print("Unity::restartGame");
+
+        //Restart();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void addCoin() {

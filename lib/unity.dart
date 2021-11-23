@@ -72,8 +72,8 @@ class UnityPlayerState extends State<UnityPlayer> {
               Navigator.pop(context);
             },
             onReplay: () {
-              // Navigator.pop(context);
-              // replayLevel(widget.levelIndex);
+              Navigator.pop(context);
+              replayLevel(widget.levelIndex);
             },
             onResume: () {
               Navigator.pop(context);
@@ -109,7 +109,7 @@ class UnityPlayerState extends State<UnityPlayer> {
   }
 
   void onUnitySceneLoaded(SceneLoaded? scene) {
-    print('Loaded: ${scene?.name}');
+    print('Loaded: ${scene?.name}, ${scene?.buildIndex}, ${scene?.isValid}');
   }
 
   void onUnityUnloaded() {
@@ -118,7 +118,7 @@ class UnityPlayerState extends State<UnityPlayer> {
 
   void startLevel(int index) {
     print('Started level: $index');
-    controller.postMessage('Loader', 'startGame', index.toString());
+    controller.postMessage('GameManager', 'startGame', index.toString());
   }
 
   void resumeLevel() {
@@ -128,6 +128,6 @@ class UnityPlayerState extends State<UnityPlayer> {
 
   void replayLevel(int index) {
     print('Replay level');
-    controller.postMessage('Loader', 'restartGame', index.toString());
+    controller.postMessage('GameManager', 'restartGame', index.toString());
   }
 }

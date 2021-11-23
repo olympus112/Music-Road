@@ -23,6 +23,7 @@ public class Car : MonoBehaviour {
     private bool goingForward;
     private bool jumping;
     private bool ducking;
+    private bool gameEnded;
 
     //TODO : get the groundpos automatically here
 
@@ -37,6 +38,7 @@ public class Car : MonoBehaviour {
         movementdirection = Vector3.forward;
         goingForward = true;
         jumping = false;
+        gameEnded = false;
 
         transform.localScale = carDimensions;
     }
@@ -68,7 +70,8 @@ public class Car : MonoBehaviour {
         }
 
         // ------------------- Death trigger -------------------
-        if (transform.position.y < -10) {
+        if (transform.position.y < -10 && !gameEnded) {
+            gameEnded = true;
             gameManager.endGame();
         }
     }
