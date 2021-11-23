@@ -24,10 +24,13 @@ public class Car : MonoBehaviour {
     private bool jumping;
     private bool ducking;
 
+
     //TODO : get the groundpos automatically here
 
     // Start is called before the first frame update
     void Start() {
+
+
         gameManager = FindObjectOfType<GameManager>();
         slider = FindObjectOfType<LevelProgressionMeter>();
 
@@ -56,7 +59,7 @@ public class Car : MonoBehaviour {
         // end of swipe or click
         if (Input.GetMouseButtonUp(0))
         {
-            if (!gameManager.paused) {
+            if (!gameManager.paused){
                 float difference = Input.mousePosition.y - startMousePosition.y;
                 if (difference >= 15)
                     jump();
@@ -64,7 +67,8 @@ public class Car : MonoBehaviour {
                     duck();
                 else
                     changeDirection();
-            } 
+            }
+            
         }
 
         // ------------------- Death trigger -------------------
@@ -74,11 +78,13 @@ public class Car : MonoBehaviour {
     }
 
     void changeDirection() {
-            // change direction
-            movementdirection = goingForward ? Vector3.right : Vector3.forward;
+        print("change: " + goingForward);
+        // change direction
+        movementdirection = goingForward ? Vector3.right : Vector3.forward;
 
-            // change boolean
-            goingForward = !goingForward;
+        // change boolean
+        goingForward = !goingForward;
+        print("changed: " + goingForward);
     }
 
     void duck(){
@@ -109,6 +115,11 @@ public class Car : MonoBehaviour {
         jumping = false;
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
             FindObjectOfType<GameManager>().endGame(true);
+    }
+
+    public void revertPausedClick() {
+        gameManager.recentleyPaused = false;
+        changeDirection();
     }
 
 
