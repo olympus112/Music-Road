@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/globals.dart';
+import 'package:musicroad/unity.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/userdata_adapter.dart';
 import 'package:musicroad/view.dart';
@@ -31,10 +32,18 @@ class App extends StatelessWidget {
           checkColor: MaterialStateColor.resolveWith((_) => Colors.white70),
         ),
       ),
-      home: SafeArea(
+      routes: {
+        '/': (context) => const View(),
+        '/unity': (context) {
+          return Builder(
+            builder: (context) => UnityPlayer(levelIndex: ModalRoute.of(context)!.settings.arguments as int),
+          );
+        },
+      },
+      builder: (context, child) => SafeArea(
         child: MediaQuery.fromWindow(
-          child: const Scaffold(
-            body: View(),
+          child: Scaffold(
+            body: child,
           ),
         ),
       ),

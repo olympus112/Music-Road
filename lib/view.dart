@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/buy.dart';
 import 'package:musicroad/statistics.dart';
-import 'package:musicroad/unity.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/utils.dart';
 import 'package:musicroad/widgets.dart';
@@ -170,12 +169,9 @@ class ViewState extends State<View> {
     );
   }
 
-  void onPlay() {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const UnityPlayer(),
-      ),
-    );
+  void onPlay(int index) {
+    print('Trying to play $index');
+    Navigator.of(context).pushNamed('/unity', arguments: index);
   }
 
   void onBuy() {

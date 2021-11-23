@@ -13,9 +13,9 @@ class LevelScores {
   final int gold;
 
   const LevelScores({
-    this.bronze = 100,
-    this.silver = 200,
-    this.gold = 300,
+    this.bronze = 500,
+    this.silver = 700,
+    this.gold = 1000,
   });
 }
 

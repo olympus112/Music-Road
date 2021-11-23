@@ -120,7 +120,7 @@ public class TestCar : MonoBehaviour {
             
         jumping = false;
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
-            FindObjectOfType<GameManager>().endGame(true);
+            FindObjectOfType<GameManager>().endGame();
     }
 
     public void setGameCreator(GameCreator creator)

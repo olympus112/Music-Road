@@ -69,16 +69,16 @@ public class Car : MonoBehaviour {
 
         // ------------------- Death trigger -------------------
         if (transform.position.y < -10) {
-            gameManager.endGame(false);
+            gameManager.endGame();
         }
     }
 
     void changeDirection() {
-            // change direction
-            movementdirection = goingForward ? Vector3.right : Vector3.forward;
+        // change direction
+        movementdirection = goingForward ? Vector3.right : Vector3.forward;
 
-            // change boolean
-            goingForward = !goingForward;
+        // change boolean
+        goingForward = !goingForward;
     }
 
     void duck(){
@@ -108,7 +108,7 @@ public class Car : MonoBehaviour {
     private void OnCollisionEnter(Collision collision) {
         jumping = false;
         if (collision.gameObject.transform.name == "FinnishLine(Clone)")
-            FindObjectOfType<GameManager>().endGame(true);
+            FindObjectOfType<GameManager>().endGame();
     }
 
 

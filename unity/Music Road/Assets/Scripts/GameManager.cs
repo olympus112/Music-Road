@@ -1,6 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
     [SerializeField]
@@ -9,32 +12,71 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject gameCanvas;
 
-    public bool paused = false;
-
-
-
-    // Start is called before the first frame update
-    // zal voor start uitgevoerd worden
+    private static UnityMessageManager messenger;
+    public int coins;
+    public bool paused;
+    
     private void Start() {
+        messenger = GetComponent<UnityMessageManager>();
+        Time.timeScale = 1;
+        paused = false;
+        coins = 0;
+
         // spawn car
         Car player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
     }
+    
+    // Called from Unity
+    public void endGame() {
+        print("Unity::endLevel");
+        
+        LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        double percentage = meter.distanceCovered / meter.totalDistance;
+        print("Meter found " + meter);
+        
+        Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
+            {"action", "stop"},
+            {"percentage", percentage},
+            {"score", percentage * 1000},
+            {"coins", coins}
+        };
+        
+        var message = JsonConvert.SerializeObject(parameters);
+        messenger.SendMessageToFlutter(message);
 
-    // TODO kan je dan nog altijd klikken om van richting te veranderen?
+        SceneManager.LoadScene(0);
+    }
+
+    // Called from Flutter
+    public void resumeGame(string message) {
+        print("Unity::resumeLevel");
+        
+        Time.timeScale = 1;
+        paused = false;
+    }
+
+    // Called from Unity
     public void pauseGame() {
-        Time.timeScale = paused ? 1 : 0;
+        print("Unity::pauzeLevel");
+        
+        Time.timeScale = 0;
+        paused = true;
+        
+        LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
+        print("Meter found " + meter);
+        double percentage = meter.distanceCovered / meter.totalDistance;
+        Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
+            {"action", "pauze"},
+            {"percentage", percentage},
+            {"score", percentage * 1000}
+        };
 
-        paused = !paused;
+        var message = JsonConvert.SerializeObject(parameters);
+        messenger.SendMessageToFlutter(message);
     }
 
-    public void addCoin()
-    {
-        print("added coin");
-    }
-
-    public void endGame(bool won) {
-        print("game won = " + won);
-        FindObjectOfType<LevelLoader>().reloadScene();
+    public void addCoin() {
+        coins++;
     }
 }

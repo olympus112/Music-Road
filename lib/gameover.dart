@@ -16,6 +16,8 @@ class GameOverDialog extends StatelessWidget {
   final int score;
   final int coins;
   final double percentage;
+  final VoidCallback onMenu;
+  final VoidCallback onReplay;
 
   const GameOverDialog({
     Key? key,
@@ -24,6 +26,8 @@ class GameOverDialog extends StatelessWidget {
     required this.score,
     required this.coins,
     required this.percentage,
+    required this.onMenu,
+    required this.onReplay,
   }) : super(key: key);
 
   @override
@@ -78,8 +82,8 @@ class GameOverDialog extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Widgets.button(Icons.menu, AppData.levelData[index].colors.accent, () => Navigator.pop(context)),
-        Widgets.button(Icons.replay, AppData.levelData[index].colors.accent, () {}),
+        Widgets.button(Icons.menu, AppData.levelData[index].colors.accent, onMenu),
+        Widgets.button(Icons.replay, AppData.levelData[index].colors.accent, onReplay),
       ],
     );
   }

@@ -3,10 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
-import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/medal.dart';
-import 'package:musicroad/pauze.dart';
 import 'package:musicroad/stars.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/view.dart';
@@ -63,58 +61,11 @@ class Level extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: Globals.borderRadius,
-        onLongPress: () {
-          showDialog(
-            barrierDismissible: false,
-            barrierColor: Colors.black87,
-            context: context,
-            builder: (context) {
-              return GameOverDialog(
-                index: info.index,
-                title: 'Game Over',
-                score: 150,
-                percentage: 0.7,
-                coins: 200,
-              );
-            },
-          );
-        },
-        onDoubleTap: () {
-          showDialog(
-            barrierDismissible: false,
-            barrierColor: Colors.black87,
-            context: context,
-            builder: (context) {
-              return GameOverDialog(
-                index: info.index,
-                title: 'Level completed!',
-                score: 300,
-                percentage: 1,
-                coins: 300,
-              );
-            },
-          );
-        },
-        onTapCancel: () {
-          showDialog(
-            barrierDismissible: false,
-            barrierColor: Colors.black87,
-            context: context,
-            builder: (context) {
-              return PauzeDialog(
-                index: info.index,
-                level: AppData.levelData[info.index].song.title,
-                percentage: 0.5,
-                score: 220,
-              );
-            },
-          );
-        },
         onTap: () {
           if (Hive.box<UserLevelData>(Globals.levels).getAt(info.index)?.unlocked == false)
             View.of(context).onBuy();
           else
-            View.of(context).onPlay();
+            View.of(context).onPlay(info.index);
         },
         child: ParallaxContainer(
           translationFactor: 50,

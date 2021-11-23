@@ -12,6 +12,9 @@ class PauzeDialog extends StatelessWidget {
   final String level;
   final double percentage;
   final int score;
+  final VoidCallback onResume;
+  final VoidCallback onMenu;
+  final VoidCallback onReplay;
 
   const PauzeDialog({
     Key? key,
@@ -19,6 +22,9 @@ class PauzeDialog extends StatelessWidget {
     required this.level,
     required this.percentage,
     required this.score,
+    required this.onReplay,
+    required this.onResume,
+    required this.onMenu,
   }) : super(key: key);
 
   @override
@@ -73,9 +79,9 @@ class PauzeDialog extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Widgets.button(Icons.replay, AppData.levelData[index].colors.accent, () {}),
-        Widgets.button(Icons.menu, AppData.levelData[index].colors.accent, () => Navigator.pop(context)),
-        Widgets.button(Icons.play_arrow, AppData.levelData[index].colors.accent, () {}),
+        Widgets.button(Icons.replay, AppData.levelData[index].colors.accent, onReplay),
+        Widgets.button(Icons.menu, AppData.levelData[index].colors.accent, onMenu),
+        Widgets.button(Icons.play_arrow, AppData.levelData[index].colors.accent, onResume),
       ],
     );
   }
