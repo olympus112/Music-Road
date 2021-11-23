@@ -29,6 +29,8 @@ public class GameManager : MonoBehaviour {
 
         Time.timeScale = 0;
         paused = true;
+
+        Restart();
     }
 
     private void Restart() {
@@ -36,11 +38,13 @@ public class GameManager : MonoBehaviour {
         paused = false;
         coins = 0;
 
-        audioSource.Play();// twee keer zodat het zeker van het begin speelt
-        audioSource.Play();
+        audioSource.Play(0);// twee keer zodat het zeker van het begin speelt
+        audioSource.Play(0);
         
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
+
+        player.setSpeed();
 
 
     }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Car : MonoBehaviour {
     [SerializeField]
-    float speed = 5f;
+    float playerSpeed = 5f;
 
     [SerializeField]
     float jumpVelocity = 10f;
@@ -24,6 +24,7 @@ public class Car : MonoBehaviour {
     private bool jumping;
     private bool ducking;
     private bool gameEnded;
+    private float speed;
 
 
     //TODO : get the groundpos automatically here
@@ -123,5 +124,8 @@ public class Car : MonoBehaviour {
         changeDirection();
     }
 
+    public void setSpeed() {
+        speed = playerSpeed;
+    }
 
 }

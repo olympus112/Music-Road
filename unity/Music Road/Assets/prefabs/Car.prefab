@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aaca534baa57c84596af0aa5cb564f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 15
+  playerSpeed: 15
   jumpVelocity: 15
   carDimensions: {x: 1.5, y: 1.5, z: 1.5}
 --- !u!54 &-6266495446216094849
