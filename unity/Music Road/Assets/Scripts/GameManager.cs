@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour {
         audioSource.Play();
         
             
-        if (!player)
+        if (player)
             Destroy(player.gameObject);
 
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
@@ -73,9 +73,7 @@ public class GameManager : MonoBehaviour {
     // Called from Unity
     public void pauseGame() {
         audioSource.Pause();
-            
 
-        paused = !paused;
         print("Unity::pauzeLevel");
         
         Time.timeScale = 0;
