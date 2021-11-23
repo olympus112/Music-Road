@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -34,6 +35,9 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1;
         paused = false;
         coins = 0;
+
+        audioSource.Play();// twee keer zodat het zeker van het begin speelt
+        audioSource.Play();
         
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
@@ -47,6 +51,7 @@ public class GameManager : MonoBehaviour {
         
         Time.timeScale = 0;
         paused = true;
+        audioSource.Pause();
         
         LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         double percentage = meter.distanceCovered / meter.totalDistance;
