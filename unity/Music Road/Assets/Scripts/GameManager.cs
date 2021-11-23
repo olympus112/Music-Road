@@ -39,10 +39,12 @@ public class GameManager : MonoBehaviour {
         audioSource.Play();// twee keer zodat het zeker van het begin speelt
         audioSource.Play();
         
+            
+        if (!player)
+            Destroy(player.gameObject);
+
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
-
-
     }
     
     // Called from Unity
@@ -66,14 +68,10 @@ public class GameManager : MonoBehaviour {
         
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
-        
-        Destroy(player.gameObject);
     }
 
     // Called from Unity
     public void pauseGame() {
-
-        
         audioSource.Pause();
             
 

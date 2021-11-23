@@ -3,6 +3,7 @@ import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/buy.dart';
+import 'package:musicroad/main.dart';
 import 'package:musicroad/statistics.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/utils.dart';
@@ -171,7 +172,8 @@ class ViewState extends State<View> {
 
   void onPlay(int index) {
     print('Trying to play $index');
-    Navigator.of(context).pushNamed('/unity', arguments: index);
+    Navigator.of(context).pop();
+    App.unity.currentState!.startLevel(index);
   }
 
   void onBuy() {
