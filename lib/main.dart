@@ -5,7 +5,6 @@ import 'package:musicroad/globals.dart';
 import 'package:musicroad/unity.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/userdata_adapter.dart';
-import 'package:musicroad/view.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -36,7 +35,6 @@ class App extends StatelessWidget {
       ),
       routes: {
         '/': (context) => UnityPlayer(key: unity, levelIndex: 1),
-        '/menu': (context) => const View(),
       },
       builder: (context, child) => SafeArea(
         child: MediaQuery.fromWindow(

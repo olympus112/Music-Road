@@ -5,6 +5,7 @@ import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/gameover.dart';
 import 'package:musicroad/pauze.dart';
+import 'package:musicroad/view.dart';
 
 class UnityPlayer extends StatefulWidget {
   final int levelIndex;
@@ -49,8 +50,9 @@ class UnityPlayerState extends State<UnityPlayer> {
   }
 
   void onUnityCreated(BuildContext context, UnityWidgetController controller) {
+    print('Unity created');
     this.controller = controller;
-    Navigator.pushNamed(context, '/menu');
+    showDialog(context: context, builder: (context) => const View());
   }
 
   void onUnityMessage(BuildContext context, dynamic message) {
@@ -58,7 +60,6 @@ class UnityPlayerState extends State<UnityPlayer> {
     final action = json['action'];
 
     print('message received: $json');
-
     if (action == 'pauze') {
       showDialog(
         barrierDismissible: false,
@@ -71,7 +72,8 @@ class UnityPlayerState extends State<UnityPlayer> {
             score: (json['score'] as double).round(),
             percentage: json['percentage'] as double,
             onMenu: () {
-              Navigator.popAndPushNamed(context, '/menu');
+              Navigator.pop(context);
+              showDialog(context: context, builder: (context) => const View());
             },
             onReplay: () {
               Navigator.pop(context);
@@ -97,7 +99,9 @@ class UnityPlayerState extends State<UnityPlayer> {
             coins: json['coins'] as int,
             percentage: json['percentage'] as double,
             onMenu: () {
-              Navigator.popAndPushNamed(context, '/menu');
+              // Navigator.popAndPushNamed(context, '/menu');
+              Navigator.pop(context);
+              showDialog(context: context, builder: (context) => const View());
             },
             onReplay: () {
               Navigator.pop(context);
