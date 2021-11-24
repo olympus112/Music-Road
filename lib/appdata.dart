@@ -46,7 +46,7 @@ class AppData {
       song: SongData(
         title: 'Epic Trailer',
         artist: 'Scott Holmes Music',
-        album: 'Cinematic Background Music',
+        album: 'Cinematic Music',
         released: '2020',
         time: '1:58',
         cover: 'images/sttr.jpg',
@@ -73,7 +73,7 @@ class AppData {
       scores: LevelScores(),
       colors: LevelColors(
         text: Colors.white,
-        accent: Color(0xff64588a),
+        accent: Color(0xff117d9e),
       ),
     ),
   ];

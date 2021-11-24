@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField]
     GameObject gameCanvas;
+
     [SerializeField]
     GameObject tapToStartCanvas;
 
@@ -23,17 +24,23 @@ public class GameManager : MonoBehaviour {
     public int coins;
     public bool paused;
     private bool tappedToStart;
-    
-    private void Start() {
 
+    private void Start() {
         print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
-        
+
         messenger = GetComponent<UnityMessageManager>();
         audioSource = GetComponent<AudioSource>();
 
         Time.timeScale = 0;
         paused = true;
         tappedToStart = false;
+        
+        Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
+            {"action", "load"},
+        };
+
+        var message = JsonConvert.SerializeObject(parameters);
+        messenger.SendMessageToFlutter(message);
     }
 
     private void Restart() {
@@ -43,7 +50,7 @@ public class GameManager : MonoBehaviour {
         audioSource.Stop();
 
         tapToStartCanvas.SetActive(true);
-            
+
         if (player)
             Destroy(player.gameObject);
 
@@ -51,12 +58,9 @@ public class GameManager : MonoBehaviour {
         FindObjectOfType<CameraMovement>().setPlayer(player);
 
         FindObjectOfType<LevelProgressionMeter>().resetSlider();
-
-
     }
 
     public void tapToStart() {
-
         // twee keer zodat het zeker van het begin speelt
         audioSource.Play(0);
 
@@ -68,22 +72,22 @@ public class GameManager : MonoBehaviour {
     // Called from Unity
     public void endGame() {
         print("Unity::endLevel");
-        
+
         Time.timeScale = 0;
         paused = true;
         audioSource.Pause();
-        
+
         LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         double percentage = meter.distanceCovered / meter.totalDistance;
         print("Meter found " + meter);
-        
+
         Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
             {"action", "stop"},
             {"percentage", percentage},
             {"score", percentage * 1000},
             {"coins", coins}
         };
-        
+
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
     }
@@ -93,10 +97,10 @@ public class GameManager : MonoBehaviour {
         audioSource.Pause();
 
         print("Unity::pauzeLevel");
-        
+
         Time.timeScale = 0;
         paused = true;
-        
+
         LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         print("Meter found " + meter);
         double percentage = meter.distanceCovered / meter.totalDistance;
@@ -109,11 +113,11 @@ public class GameManager : MonoBehaviour {
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
     }
-    
+
     // Called from Flutter
     public void resumeGame(string message) {
         print("Unity::resumeLevel");
-        
+
         audioSource.Play(0);
 
         Time.timeScale = 1;
