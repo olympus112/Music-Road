@@ -29,4 +29,10 @@ public class LevelProgressionMeter : MonoBehaviour {
             slider.value = distanceCovered / totalDistance;
 
     }
+
+    public void resetSlider() {
+        distanceCovered = 0f;
+        if (FindObjectOfType<GameInitiator>())
+            totalDistance = FindObjectOfType<GameInitiator>().getTotalDistance();
+    }
 }

@@ -34,8 +34,6 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 0;
         paused = true;
         tappedToStart = false;
-
-        Restart();
     }
 
     private void Restart() {
@@ -49,9 +47,10 @@ public class GameManager : MonoBehaviour {
         if (player)
             Destroy(player.gameObject);
 
-        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
+        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, -2)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
-        
+
+        FindObjectOfType<LevelProgressionMeter>().resetSlider();
 
 
     }
