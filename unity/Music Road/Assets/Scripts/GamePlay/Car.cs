@@ -118,7 +118,7 @@ public class Car : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision) {
         jumping = false;
-        if (collision.gameObject.transform.name == "FinnishLine(Clone)"){
+        if (collision.gameObject.transform.name == "FinnishLine(Clone)") {
 
             FindObjectOfType<LevelProgressionMeter>().setSliderToMax();
             FindObjectOfType<GameManager>().endGame();
