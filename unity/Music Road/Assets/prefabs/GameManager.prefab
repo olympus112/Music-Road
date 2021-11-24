@@ -46,7 +46,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   car: {fileID: -4556563210818500149, guid: dfa2bc568b4352e47bfd57ede3b33fde, type: 3}
-  gameCanvas: {fileID: 0}
+  gameCanvas: {fileID: 5293093980140059917, guid: f1d9298f39b9e1641bc1eaab546f5637,
+    type: 3}
+  tapToStartCanvas: {fileID: 2245125626658106559, guid: fab1427bad346e145a7b16f06296f0b2,
+    type: 3}
   recentleyPaused: 0
   coins: 0
   paused: 0

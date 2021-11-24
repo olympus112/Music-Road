@@ -60,9 +60,12 @@ public class Car : MonoBehaviour {
             startMousePosition = Input.mousePosition;
 
         // end of swipe or click
-        if (Input.GetMouseButtonUp(0))
-        {
-            if (!gameManager.paused){
+        if (Input.GetMouseButtonUp(0)) {
+
+            if (speed == 0)
+                gameManager.tapToStart();
+            else if (!gameManager.paused)
+            {
                 float difference = Input.mousePosition.y - startMousePosition.y;
                 if (difference >= 15)
                     jump();

@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField]
     GameObject gameCanvas;
+    [SerializeField]
+    GameObject tapToStartCanvas;
 
 
     public bool recentleyPaused;
@@ -20,8 +22,10 @@ public class GameManager : MonoBehaviour {
     private static UnityMessageManager messenger;
     public int coins;
     public bool paused;
+    private bool tappedToStart;
     
     private void Start() {
+
         print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
         
         messenger = GetComponent<UnityMessageManager>();
@@ -29,6 +33,7 @@ public class GameManager : MonoBehaviour {
 
         Time.timeScale = 0;
         paused = true;
+        tappedToStart = false;
 
         Restart();
     }
@@ -37,22 +42,30 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1;
         paused = false;
         coins = 0;
+        audioSource.Stop();
 
-        audioSource.Play(0);// twee keer zodat het zeker van het begin speelt
-        audioSource.Play(0);
-        
+        tapToStartCanvas.SetActive(true);
             
         if (player)
             Destroy(player.gameObject);
 
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, 0)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
-
-        player.setSpeed();
+        
 
 
     }
-    
+
+    public void tapToStart() {
+
+        // twee keer zodat het zeker van het begin speelt
+        audioSource.Play(0);
+
+        player.setSpeed();
+
+        tapToStartCanvas.SetActive(false);
+    }
+
     // Called from Unity
     public void endGame() {
         print("Unity::endLevel");
