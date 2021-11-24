@@ -18621,6 +18621,11 @@ PrefabInstance:
       propertyPath: pauseCanvas
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4723639596833306741, guid: f176e0bf64470c4489abb25bcbbc6bfb,
+        type: 3}
+      propertyPath: tapToStartCanvas
+      value: 
+      objectReference: {fileID: 2010049930}
     - target: {fileID: 6836550047131514613, guid: f176e0bf64470c4489abb25bcbbc6bfb,
         type: 3}
       propertyPath: m_Name
@@ -51194,6 +51199,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2007994464}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &2010049930 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2245125626658106559, guid: fab1427bad346e145a7b16f06296f0b2,
+    type: 3}
+  m_PrefabInstance: {fileID: 1441642672}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2010090041
 GameObject:
   m_ObjectHideFlags: 0
