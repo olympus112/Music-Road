@@ -1,10 +1,14 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
 import 'package:musicroad/gameover.dart';
+import 'package:musicroad/globals.dart';
 import 'package:musicroad/pauze.dart';
+import 'package:musicroad/userdata.dart';
 import 'package:musicroad/view.dart';
 
 class UnityPlayer extends StatefulWidget {
@@ -52,7 +56,7 @@ class UnityPlayerState extends State<UnityPlayer> {
   void onUnityCreated(BuildContext context, UnityWidgetController controller) {
     print('Unity created');
     this.controller = controller;
-    showDialog(context: context, builder: (context) => const View());
+    showMenu(context);
   }
 
   void onUnityMessage(BuildContext context, dynamic message) {
@@ -73,7 +77,7 @@ class UnityPlayerState extends State<UnityPlayer> {
             percentage: json['percentage'] as double,
             onMenu: () {
               Navigator.pop(context);
-              showDialog(context: context, builder: (context) => const View());
+              showMenu(context);
             },
             onReplay: () {
               Navigator.pop(context);
@@ -87,6 +91,16 @@ class UnityPlayerState extends State<UnityPlayer> {
         },
       );
     } else if (action == 'stop') {
+      final level = Hive.box<UserLevelData>(Globals.levels).getAt(1)!;
+      level.score = max((json['score'] as double).round(), level.score);
+      level.timesPlayed += 1;
+      level.timesLost += json['percentage'] != 1.0 ? 1 : 0;
+      level.timesWon += json['percentage'] == 1.0 ? 1 : 0;
+      level.save();
+
+      final user = Hive.box(Globals.user);
+      user.put(UserData.coins, user.get(UserData.coins) + json['coins'] as int);
+
       showDialog(
         barrierDismissible: false,
         barrierColor: Colors.black87,
@@ -99,9 +113,8 @@ class UnityPlayerState extends State<UnityPlayer> {
             coins: json['coins'] as int,
             percentage: json['percentage'] as double,
             onMenu: () {
-              // Navigator.popAndPushNamed(context, '/menu');
               Navigator.pop(context);
-              showDialog(context: context, builder: (context) => const View());
+              showMenu(context);
             },
             onReplay: () {
               Navigator.pop(context);
@@ -134,5 +147,15 @@ class UnityPlayerState extends State<UnityPlayer> {
   void replayLevel(int index) {
     print('Replay level');
     controller.postMessage('GameManager', 'restartGame', index.toString());
+  }
+
+  void showMenu(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black,
+      useSafeArea: true,
+      context: context,
+      builder: (context) => const View(),
+    );
   }
 }
