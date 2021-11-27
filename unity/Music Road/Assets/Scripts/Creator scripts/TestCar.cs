@@ -70,24 +70,18 @@ public class TestCar : MonoBehaviour {
             }
         }
         else {
-            if (Input.GetMouseButton(0))
-                reverseTime();
-            else {
-                // calculate absolute distance to next turningpoint
-                int index = turningPositions.Count - 1;
-                if (index != -1)
-                {
-                    Vector3 distance = transform.position - turningPositions[index]; //will throw errors if you revert till the beginning
-                    float totalDistance = distance.x + distance.z;
-                    if (totalDistance < movement * -1)
-                    { // take the movement as guess for next frames movement and don't forget it is always negative here
-                        changeDirection();
-                        transform.position = turningPositions[index];
-                        turningPositions.RemoveAt(index);
-                    }
+            // calculate absolute distance to next turningpoint
+            int index = turningPositions.Count - 1;
+            if (index != -1) {
+                Vector3 distance = transform.position - turningPositions[index]; //will throw errors if you revert till the beginning
+                float totalDistance = distance.x + distance.z;
+                if (totalDistance < movement * -1)
+                { // take the movement as guess for next frames movement and don't forget it is always negative here
+                    changeDirection();
+                    transform.position = turningPositions[index];
+                    turningPositions.RemoveAt(index);
                 }
             }
-            
         }
     }
 
