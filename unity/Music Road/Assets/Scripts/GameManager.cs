@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject tapToStartCanvas;
 
+    [SerializeField]
+    List<GameObject> Levels;
 
     public bool recentleyPaused;
 
@@ -23,7 +25,8 @@ public class GameManager : MonoBehaviour {
     private static UnityMessageManager messenger;
     public int coins;
     public bool paused;
-    private bool tappedToStart;
+
+    private GameObject currentlyLoadedLevel;
 
     private void Start() {
         print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
@@ -33,7 +36,6 @@ public class GameManager : MonoBehaviour {
 
         Time.timeScale = 0;
         paused = true;
-        tappedToStart = false;
         
         Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
             {"action", "load"},
@@ -41,9 +43,12 @@ public class GameManager : MonoBehaviour {
 
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
+
+        // UNCOMENT TO PLAY IN UNITY
+        //Restart();
     }
 
-    private void Restart() {
+    private void Restart(int index = 0) {
         Time.timeScale = 1;
         paused = false;
         coins = 0;
@@ -58,6 +63,8 @@ public class GameManager : MonoBehaviour {
         FindObjectOfType<CameraMovement>().setPlayer(player);
 
         FindObjectOfType<LevelProgressionMeter>().resetSlider();
+
+        currentlyLoadedLevel = Instantiate(Levels[index], transform.position, transform.rotation);
     }
 
     public void tapToStart() {
@@ -90,6 +97,12 @@ public class GameManager : MonoBehaviour {
 
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
+
+        Destroy(currentlyLoadedLevel);
+
+
+        // UNCOMENT TO PLAY IN UNITY
+        // Restart();
     }
 
     // Called from Unity
