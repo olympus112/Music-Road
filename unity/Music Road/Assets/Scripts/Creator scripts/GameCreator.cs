@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -42,7 +43,10 @@ public class GameCreator : MonoBehaviour {
     private int smallClusterCounter;
     private int smallClusterLength;
     private bool inSmallCluster;
-
+    private bool didAJump;
+    private AudioSource audioSource;
+    private List<List<GameObject>> createdRoadSegments = new List<List<GameObject>>();
+    
     // Start is called before the first frame update
     // zal voor start uitgevoerd worden
     private void Start() {
@@ -53,10 +57,11 @@ public class GameCreator : MonoBehaviour {
         bigClusterCounter = 0;
         smallClusterCounter = frequencyOfSmallCoinClusters;
         smallClusterLength = 0;
-        inSmallCluster = false;
+        audioSource = GetComponent<AudioSource>();
+        didAJump = false;
     }
 
-    public void createNewRoad(Vector3 currentTurnPos){
+    public void createNewRoad(Vector3 currentTurnPos, bool jumped){
         Vector3 distance = currentTurnPos - lastTurnPos;
         Vector3 roadPos = lastTurnPos + distance / 2f;
         roadPos.y = roadHeightPos;
@@ -68,6 +73,14 @@ public class GameCreator : MonoBehaviour {
         
         GameObject road = Instantiate(testRoad, roadPos, transform.rotation);
         road.transform.localScale = scale;
+        if (didAJump) {
+            createdRoadSegments[createdRoadSegments.Count - 1].Add(road);
+            didAJump = false;
+        }
+        else
+            createdRoadSegments.Add(new List<GameObject>() { road });
+
+        didAJump = jumped;// indicates that the next road comes after a jump
 
         float availableSpaceForCoins = (Mathf.Max(distance.x, distance.z));
 
@@ -110,14 +123,17 @@ public class GameCreator : MonoBehaviour {
         for (int i = relativeStartingPlaceOfcoins; i <= relativeStartingPlaceOfcoins * -1; i++) {
             Vector3 coinPos = direction * i * distanceBetweenCoins + new Vector3(0,1.25f,0);
             coinPos += road.transform.position;
-            Instantiate(coin, coinPos, coin.transform.rotation);
-            
+            GameObject c = Instantiate(coin, coinPos, coin.transform.rotation);
+
+            createdRoadSegments[createdRoadSegments.Count - 1].Add(c);
         }
     }
 
     private void placeCornerCoins(Vector3 pos) {
         pos.y = 0.75f;
-        Instantiate(coin, pos, coin.transform.rotation);
+        GameObject c = Instantiate(coin, pos, coin.transform.rotation);
+
+        createdRoadSegments[createdRoadSegments.Count - 1].Add(c);
     }
 
     public void updatePos(Vector3 pos) {
@@ -135,7 +151,7 @@ public class GameCreator : MonoBehaviour {
 
     public void createNewOverhang(Vector3 pos) {
         if (!startedOverhead) {
-            createNewRoad(pos);
+            createNewRoad(pos,true);// mimics a jump only with something in the middle
             startedOverhead = true;
             startingOverheadPos = pos;
         }
@@ -152,19 +168,46 @@ public class GameCreator : MonoBehaviour {
             centerRoad2.y = roadHeightPos;
             Vector3 centerOverHang = startingOverheadPos + difference / 2;
             centerOverHang.y = roadHeightPos;
- 
+
             GameObject road1 = Instantiate(testRoad, centerRoad1, transform.rotation);
             road1.transform.localScale = extraRoadScale;
+            createdRoadSegments[createdRoadSegments.Count - 1].Add(road1);
+ 
+            GameObject oh = Instantiate(overHang, centerOverHang, transform.rotation);
+            oh.transform.localScale = new Vector3(Mathf.Max(direction.x * overhangLenght, roadWidth), 1, Mathf.Max(direction.z*overhangLenght,roadWidth));
+            createdRoadSegments[createdRoadSegments.Count - 1].Add(oh);
 
             GameObject road2 = Instantiate(testRoad, centerRoad2, transform.rotation);
             road2.transform.localScale = extraRoadScale;
-
-            GameObject oh = Instantiate(overHang, centerOverHang, transform.rotation);
-            oh.transform.localScale = new Vector3(Mathf.Max(direction.x * overhangLenght, roadWidth), 1, Mathf.Max(direction.z*overhangLenght,roadWidth)) ;
+            createdRoadSegments[createdRoadSegments.Count - 1].Add(road2);
 
             startedOverhead = false;
 
             lastTurnPos = pos;
+        }
+    }
+
+    public void toggleMusic(Vector3 newLastTurnPos) {
+        audioSource.pitch *= -1;
+        lastTurnPos = newLastTurnPos;
+        if (didAJump) { //removes the half bit of a jump
+            removeRoadSegment();
+            didAJump = false;
+        }
+    }
+
+    public void revertTurn() {
+        removeRoadSegment();
+    }
+
+    private void removeRoadSegment() {
+        int index = createdRoadSegments.Count - 1;
+        if (index != -1) {
+            List<GameObject> roadSegment = createdRoadSegments[createdRoadSegments.Count - 1];
+            createdRoadSegments.RemoveAt(index);
+            foreach (GameObject RoadPiece in roadSegment) {
+                Destroy(RoadPiece.gameObject);
+            }
         }
     }
 }

@@ -23,7 +23,8 @@ public class TestCar : MonoBehaviour {
     private bool goingForward;
     private bool jumping;
     private bool ducking;
-    private float duckingStartTime;
+    private bool goingforwards;
+    private List<Vector3> turningPositions = new List<Vector3>();
 
     //TODO : get the groundpos automatically here
 
@@ -36,8 +37,11 @@ public class TestCar : MonoBehaviour {
         movementdirection = Vector3.forward;
         goingForward = true;
         jumping = false;
+        goingforwards = true;
 
         transform.localScale = carDimensions;
+
+        turningPositions.Add(transform.position);
     }
 
     // Update is called once per frame
@@ -47,27 +51,45 @@ public class TestCar : MonoBehaviour {
         transform.position += movementdirection * movement;
 
         // ------------------- Input -------------------
-        
-        if (Input.GetMouseButtonDown(0))
-            startMousePosition = Input.mousePosition;
+        if (Input.GetKeyDown(KeyCode.Space))
+            reverseTime();
 
-        // end of swipe or click
-        if (Input.GetMouseButtonUp(0))
-        {
-            float difference = Input.mousePosition.y - startMousePosition.y;
-            if (difference >= 15){
-                jump();
-                
-            }
-            else if (difference <= -15) {
-                duck();
-                    
-            }
-            else {
-                changeDirection();
-                
+        if (goingforwards) {
+            if (Input.GetMouseButtonDown(0))
+                startMousePosition = Input.mousePosition;
+
+            // end of swipe or click
+            if (Input.GetMouseButtonUp(0)) {
+                float difference = Input.mousePosition.y - startMousePosition.y;
+                if (difference >= 15)
+                    jump();
+                else if (difference <= -15)
+                    duck();
+                else
+                    changeDirection();
             }
         }
+        else {
+            // calculate absolute distance to next turningpoint
+            int index = turningPositions.Count - 1;
+            if (index != -1) {
+                Vector3 distance = transform.position - turningPositions[index]; //will throw errors if you revert till the beginning
+                float totalDistance = distance.x + distance.z;
+                if (totalDistance < movement * -1)
+                { // take the movement as guess for next frames movement and don't forget it is always negative here
+                    changeDirection();
+                    transform.position = turningPositions[index];
+                    turningPositions.RemoveAt(index);
+                }
+            }
+        }
+    }
+
+
+    void reverseTime() {
+        speed *= -1;
+        goingforwards = !goingforwards;
+        gc.toggleMusic(turningPositions[turningPositions.Count - 1]);
     }
 
     void duck()
@@ -97,12 +119,18 @@ public class TestCar : MonoBehaviour {
 
             // change boolean
             goingForward = !goingForward;
-            gc.createNewRoad(transform.position);
+
+            if (goingforwards) { // not the same as goingForward
+                gc.createNewRoad(transform.position,false);
+                turningPositions.Add(transform.position);
+            }
+            else
+                gc.revertTurn();
         }
     }
     void jump() {
         if (!jumping & !ducking) {
-            gc.createNewRoad(transform.position);
+            gc.createNewRoad(transform.position,true);
             ownBody.velocity = new Vector3(0, jumpVelocity, 0);
             jumping = true;
         }
@@ -126,7 +154,5 @@ public class TestCar : MonoBehaviour {
     public void setGameCreator(GameCreator creator)
     {
         gc = creator;
-
-        print(gc);
     }
 }
