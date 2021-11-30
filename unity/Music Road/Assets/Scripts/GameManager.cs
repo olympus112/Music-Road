@@ -13,8 +13,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject tapToStartCanvas;
 
-    [SerializeField]
-    List<GameObject> Levels;
+
 
     public bool recentleyPaused;
 
@@ -27,6 +26,8 @@ public class GameManager : MonoBehaviour {
     public bool paused;
 
     private GameObject currentlyLoadedLevel;
+
+    private LevelLister levelList;
 
     private void Start() {
         print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
@@ -44,8 +45,10 @@ public class GameManager : MonoBehaviour {
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
 
-        // UNCOMENT TO PLAY IN UNITY
-        //Restart();
+        levelList = GetComponent<LevelLister>();
+
+        if (!levelList)
+            Restart();
     }
 
     private void Restart(int index = 0) {
@@ -59,12 +62,19 @@ public class GameManager : MonoBehaviour {
         if (player)
             Destroy(player.gameObject);
 
+        print(car.getStartingPosition(new Vector3(0, 0, -5)));
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, -5)), transform.rotation) as Car;
+        print(player.transform.position);
         FindObjectOfType<CameraMovement>().setPlayer(player);
 
         FindObjectOfType<LevelProgressionMeter>().resetSlider();
 
-        currentlyLoadedLevel = Instantiate(Levels[index], transform.position, transform.rotation);
+        if (levelList) {
+            currentlyLoadedLevel = Instantiate(levelList.getLevel(index), transform.position, transform.rotation);
+
+            audioSource.clip = levelList.getSong(index);
+        }
+            
     }
 
     public void tapToStart() {
@@ -101,8 +111,8 @@ public class GameManager : MonoBehaviour {
         Destroy(currentlyLoadedLevel);
 
 
-        // UNCOMENT TO PLAY IN UNITY
-        // Restart();
+        if(!levelList)
+            Restart();
     }
 
     // Called from Unity

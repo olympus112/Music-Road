@@ -70,6 +70,8 @@ public class TestCar : MonoBehaviour {
             }
         }
         else {
+            if (Input.GetMouseButtonUp(0))
+                reverseTime();
             // calculate absolute distance to next turningpoint
             int index = turningPositions.Count - 1;
             if (index != -1) {

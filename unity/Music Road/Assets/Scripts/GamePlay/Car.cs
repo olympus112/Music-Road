@@ -113,17 +113,19 @@ public class Car : MonoBehaviour {
     }
 
     public Vector3 getStartingPosition(Vector3 startPos) {
+        print("cardimension " + carDimensions.y);
+        print(carDimensions.y/2 + startPos.y);
         return new Vector3(startPos.x, startPos.y + carDimensions.y / 2, startPos.z);
     }
 
     private void OnCollisionEnter(Collision collision) {
         jumping = false;
-        if (collision.gameObject.transform.name == "FinnishLine(Clone)") {
+    /*    if (collision.gameObject.transform.name == "FinnishLine(Clone)") {
 
             FindObjectOfType<LevelProgressionMeter>().setSliderToMax();
             FindObjectOfType<GameManager>().endGame();
         }
-            
+    */            
     }
 
     public void revertPausedClick() {
