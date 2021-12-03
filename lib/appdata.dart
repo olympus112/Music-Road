@@ -27,23 +27,6 @@ class AppData {
     ),
     LevelData(
       song: SongData(
-        title: 'Sparkling Tides',
-        artist: 'Wisp X',
-        album: '97 - Level Up',
-        released: '2015',
-        time: '2:52',
-        cover: 'images/numb.jpg',
-        price: 150,
-      ),
-      difficulty: LevelDifficulty.hard,
-      scores: LevelScores(),
-      colors: LevelColors(
-        text: Colors.white,
-        accent: Color(0xffca5b61),
-      ),
-    ),
-    LevelData(
-      song: SongData(
         title: 'Epic Trailer',
         artist: 'Scott Holmes Music',
         album: 'Cinematic Music',
@@ -76,6 +59,23 @@ class AppData {
         accent: Color(0xff117d9e),
       ),
     ),
+    LevelData(
+      song: SongData(
+        title: 'Sparkling Tides',
+        artist: 'Wisp X',
+        album: '97 - Level Up',
+        released: '2015',
+        time: '2:52',
+        cover: 'images/numb.jpg',
+        price: 150,
+      ),
+      difficulty: LevelDifficulty.hard,
+      scores: LevelScores(),
+      colors: LevelColors(
+        text: Colors.white,
+        accent: Color(0xffca5b61),
+      ),
+    ),
   ];
 
   static List<UserLevelData> defaultUserLevelData = [
@@ -89,6 +89,7 @@ class AppData {
     UserSettingsData.levelVolume: 1.0,
     UserSettingsData.fxVolume: 1.0,
     UserSettingsData.showTutorial: true,
+    UserSettingsData.tapControls: true,
   };
 
   static Map<String, dynamic> defaultUserData = {

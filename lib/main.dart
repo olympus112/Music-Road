@@ -16,13 +16,13 @@ void main() async {
 
   AppData.init();
 
-  runApp(App());
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
   static GlobalKey<UnityPlayerState> unity = GlobalKey<UnityPlayerState>();
 
-  App({Key? key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +33,12 @@ class App extends StatelessWidget {
           checkColor: MaterialStateColor.resolveWith((_) => Colors.white70),
         ),
       ),
+      initialRoute: '/',
       routes: {
         '/': (context) => UnityPlayer(key: unity, levelIndex: 1),
       },
-      builder: (context, child) => SafeArea(
-        child: MediaQuery.fromWindow(
-          child: Scaffold(
-            body: child,
-          ),
-        ),
+      builder: (context, child) => Scaffold(
+        body: child,
       ),
     );
   }

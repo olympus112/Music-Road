@@ -56,4 +56,5 @@ class UserSettingsData {
   static const String levelVolume = 'levelVolume';
   static const String fxVolume = 'fxVolume';
   static const String showTutorial = 'showTutorial';
+  static const String tapControls = 'tapControls';
 }

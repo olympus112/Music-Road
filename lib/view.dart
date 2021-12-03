@@ -6,7 +6,6 @@ import 'package:musicroad/buy.dart';
 import 'package:musicroad/main.dart';
 import 'package:musicroad/statistics.dart';
 import 'package:musicroad/userdata.dart';
-import 'package:musicroad/utils.dart';
 import 'package:musicroad/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:transformer_page_view/transformer_page_view.dart';
@@ -60,13 +59,48 @@ class ViewState extends State<View> {
       child: Stack(
         children: [
           background(),
-          title(context),
+          content(context),
+          arrows(),
           Widgets.coins(),
-          level(context),
-          indicator(context),
           Widgets.settings(context, currentIndex),
         ],
       ),
+    );
+  }
+
+  Widget arrows() {
+    const double iconSize = 30;
+    const double iconPadding = (Globals.levelSideMargin - iconSize) / 2;
+    return Positioned.fill(
+      left: iconPadding,
+      right: iconPadding,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: const [
+          Icon(
+            Icons.chevron_left,
+            color: Colors.white54,
+            size: iconSize,
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: Colors.white54,
+            size: iconSize,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget content(BuildContext context) {
+    return Column(
+      children: [
+        Expanded(child: title(context), flex: 4),
+        Expanded(child: level(context), flex: 17),
+        Expanded(child: indicator(context), flex: 2),
+        const Expanded(child: SizedBox(), flex: 2),
+      ],
     );
   }
 
@@ -98,74 +132,54 @@ class ViewState extends State<View> {
   }
 
   Widget title(BuildContext context) {
-    return Positioned(
-      top: 0,
-      width: Utils.width(context),
-      height: Utils.height(context, fraction: topFraction),
-      child: Center(
-        child: AnimatedSwitcher(
-          duration: Globals.duration,
-          child: currentTitle,
-        ),
+    return Center(
+      child: AnimatedSwitcher(
+        duration: Globals.duration,
+        child: currentTitle,
       ),
     );
   }
 
   Widget level(BuildContext context) {
-    return Positioned(
-      width: Utils.width(context),
-      height: Utils.height(context),
-      child: TransformerPageView(
-        index: currentIndex,
-        loop: true,
-        itemCount: AppData.levelData.length,
-        onPageChanged: (index) => setState(() {
-          currentIndex = index;
-          currentBackground = getBackground();
-          currentTitle = getTitle(flipControllers[index].state?.isFront == false);
-        }),
-        transformer: PageTransformerBuilder(
-          builder: (child, info) {
-            return Padding(
-              padding: EdgeInsets.only(
-                top: Utils.height(context, fraction: topFraction),
-                bottom: Utils.height(context, fraction: bottomFraction + indicatorFraction),
-              ),
-              child: AppData.levelData[info.index].scores == null
-                  ? Level(info: info)
-                  : FlipCard(
-                      controller: flipControllers[info.index],
-                      flipOnTouch: false,
-                      onFlipDone: (front) => setState(() {
-                        currentTitle = getTitle(front);
-                      }),
-                      front: Level(info: info),
-                      back: Statistics(info: info),
-                    ),
-            );
-          },
-        ),
+    return TransformerPageView(
+      index: currentIndex,
+      loop: true,
+      itemCount: AppData.levelData.length,
+      onPageChanged: (index) => setState(() {
+        currentIndex = index;
+        currentBackground = getBackground();
+        currentTitle = getTitle(flipControllers[index].state?.isFront == false);
+      }),
+      transformer: PageTransformerBuilder(
+        builder: (child, info) {
+          return AppData.levelData[info.index].scores == null
+              ? Level(info: info)
+              : FlipCard(
+                  controller: flipControllers[info.index],
+                  flipOnTouch: false,
+                  onFlipDone: (front) => setState(() {
+                    currentTitle = getTitle(front);
+                  }),
+                  front: Level(info: info),
+                  back: Statistics(info: info),
+                );
+        },
       ),
     );
   }
 
   Widget indicator(BuildContext context) {
-    return Positioned(
-      width: Utils.width(context),
-      height: Utils.height(context, fraction: indicatorFraction),
-      bottom: Utils.height(context, fraction: bottomFraction),
-      child: Center(
-        child: AnimatedSmoothIndicator(
-          activeIndex: currentIndex,
-          count: AppData.levelData.length,
-          effect: const ScrollingDotsEffect(
-            dotWidth: 8,
-            dotHeight: 8,
-            activeDotColor: Colors.white70,
-            dotColor: Colors.white30,
-          ),
-          onDotClicked: (index) {},
+    return Center(
+      child: AnimatedSmoothIndicator(
+        activeIndex: currentIndex,
+        count: AppData.levelData.length,
+        effect: const ScrollingDotsEffect(
+          dotWidth: 8,
+          dotHeight: 8,
+          activeDotColor: Colors.white70,
+          dotColor: Colors.white30,
         ),
+        onDotClicked: (index) {},
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:musicroad/appdata.dart';
 import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/pauze.dart';
+import 'package:musicroad/tutorial.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/view.dart';
 
@@ -157,5 +158,19 @@ class UnityPlayerState extends State<UnityPlayer> {
       context: context,
       builder: (context) => const View(),
     );
+
+    final settings = Hive.box(Globals.settings);
+    if (settings.get(UserSettingsData.showTutorial)) {
+      showDialog(
+        barrierDismissible: false,
+        barrierColor: Colors.black,
+        useSafeArea: true,
+        context: context,
+        builder: (context) => const Tutorial(
+          color: Color(0xff9481f0),
+        ),
+      );
+      settings.put(UserSettingsData.showTutorial, false);
+    }
   }
 }

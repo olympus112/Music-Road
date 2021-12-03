@@ -35,6 +35,18 @@ class Level extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               background(),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.65),
+                    ],
+                  ),
+                ),
+              ),
               content(context),
               stars(),
               medal(),
@@ -79,7 +91,7 @@ class Level extends StatelessWidget {
                 children: [
                   Icon(
                     locked ? Icons.lock : AppData.levelData[info.index].song.icon,
-                    color: Colors.white70,
+                    color: Colors.white.withOpacity(0.9),
                     size: 100,
                   ),
                   if (locked) Coins(coins: AppData.levelData[info.index].song.price),
@@ -131,18 +143,19 @@ class Level extends StatelessWidget {
     if (AppData.levelData[info.index].scores == null) return const SizedBox.shrink();
 
     return Positioned(
-      right: Globals.levelContentPadding,
-      top: Globals.levelContentPadding,
+      right: Globals.levelContentPadding - 5,
+      top: Globals.levelContentPadding - 5,
       child: ParallaxContainer(
         translationFactor: 200,
         position: info.position,
         child: SizedBox.square(
-          dimension: Globals.infoSize,
+          dimension: Globals.infoSize + 10,
           child: RawMaterialButton(
             elevation: 1,
             shape: const CircleBorder(),
             child: const Icon(
               Globals.infoIcon,
+              size: Globals.infoSize,
               color: Globals.infoColor,
             ),
             onPressed: () => View.of(context).flipControllers[info.index].toggleCard(),

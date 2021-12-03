@@ -79,9 +79,9 @@ class PauzeDialog extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Widgets.button(Icons.replay, AppData.levelData[index].colors.accent, onReplay),
         Widgets.button(Icons.menu, AppData.levelData[index].colors.accent, onMenu),
         Widgets.button(Icons.play_arrow, AppData.levelData[index].colors.accent, onResume),
+        Widgets.button(Icons.replay, AppData.levelData[index].colors.accent, onReplay),
       ],
     );
   }

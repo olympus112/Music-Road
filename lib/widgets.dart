@@ -18,7 +18,7 @@ class Widgets {
           top: Globals.viewContentPadding,
           child: Padding(
             padding: const EdgeInsets.all(8),
-            child: Coins(coins: box.get(UserData.coins)),
+            child: Coins(coins: box.get(UserData.coins), size: 25),
           ),
         );
       },
@@ -30,15 +30,16 @@ class Widgets {
       left: Globals.viewContentPadding,
       top: Globals.viewContentPadding,
       child: Padding(
-        padding: const EdgeInsets.all(8),
+        padding: const EdgeInsets.all(4),
         child: SizedBox.square(
-          dimension: 24,
+          dimension: 30 + 8,
           child: RawMaterialButton(
             elevation: 0,
             onPressed: () => Widgets.showSettings(context, index),
             shape: const CircleBorder(),
             child: Icon(
               Icons.settings,
+              size: 30,
               color: AppData.levelData[index].colors.text,
             ),
           ),
@@ -52,7 +53,10 @@ class Widgets {
     return Container(
       key: ValueKey(cover),
       decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage(cover), fit: BoxFit.cover),
+        image: DecorationImage(
+          image: AssetImage(cover),
+          fit: BoxFit.cover,
+        ),
       ),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: sigma, sigmaY: sigma),
@@ -65,7 +69,7 @@ class Widgets {
     );
   }
 
-  static Widget button(IconData icon, Color color, VoidCallback onPressed) {
+  static Widget button(IconData icon, Color color, VoidCallback onPressed, [Color background = Colors.white70]) {
     return SizedBox.square(
       dimension: 60,
       child: RawMaterialButton(
@@ -74,7 +78,7 @@ class Widgets {
         ),
         child: Icon(
           icon,
-          color: Colors.white70,
+          color: background,
           size: 35,
         ),
         onPressed: onPressed,
