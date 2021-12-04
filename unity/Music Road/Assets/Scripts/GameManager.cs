@@ -14,6 +14,12 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject tapToStartCanvas;
 
+    [SerializeField]
+    bool testing = false;
+
+    [SerializeField]
+    float startingDistance = -6f;
+
     private static UnityMessageManager messenger;
     private AudioSource audioSource;
     private Car player;
@@ -35,17 +41,18 @@ public class GameManager : MonoBehaviour {
 
         levelList = GetComponent<LevelLister>();
 
-        if (!levelList)
+        if (!levelList || testing)
             Restart();
     }
 
-    private void Restart(int index = 0) {
+    private void Restart(int index = 0, bool mute = false, bool tap = true) {
         print("GamerManager::Restart " + index);
         
         Time.timeScale = 1;
         paused = false;
         coins = 0;
         audioSource.Stop();
+        audioSource.mute = mute;
 
         tapToStartCanvas.SetActive(true);
         
@@ -67,7 +74,8 @@ public class GameManager : MonoBehaviour {
         }
         
         // Init player
-        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, -5)), transform.rotation) as Car;
+        //TODO do something with tap
+        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, startingDistance)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
     }
 
@@ -101,7 +109,7 @@ public class GameManager : MonoBehaviour {
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
         
-        if(!levelList)
+        if(!levelList || testing)
             Restart();
     }
 
@@ -142,10 +150,10 @@ public class GameManager : MonoBehaviour {
         var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
         
         int index = Int32.Parse(json["index"]);
-        bool sound = Int32.Parse(json["sound"]) != 0;
+        bool mute = Int32.Parse(json["sound"]) == 0;
         bool tapControls = Int32.Parse(json["tap"]) != 0;
         
-        Restart(index);
+        Restart(index, mute, tapControls);
     }
 
     public void addCoin() {
