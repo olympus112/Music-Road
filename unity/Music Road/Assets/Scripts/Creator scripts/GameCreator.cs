@@ -24,7 +24,7 @@ public class GameCreator : MonoBehaviour {
     [SerializeField]
     float roadWidth = 6f;
     [SerializeField]
-    float roadHeightPos = -0.5f;
+    float roadHeight = -0.5f;
     [SerializeField]
     float distanceBetweenCoins = 3f;
     [SerializeField]
@@ -46,6 +46,8 @@ public class GameCreator : MonoBehaviour {
     private bool didAJump;
     private AudioSource audioSource;
     private List<List<GameObject>> createdRoadSegments = new List<List<GameObject>>();
+    private float roadHeightPos;
+    
     
     // Start is called before the first frame update
     // zal voor start uitgevoerd worden
@@ -57,6 +59,7 @@ public class GameCreator : MonoBehaviour {
         bigClusterCounter = 0;
         smallClusterCounter = frequencyOfSmallCoinClusters;
         smallClusterLength = 0;
+        roadHeightPos = -1 * roadHeight / 2;
         audioSource = GetComponent<AudioSource>();
         didAJump = false;
     }
@@ -64,11 +67,11 @@ public class GameCreator : MonoBehaviour {
     public void createNewRoad(Vector3 currentTurnPos, bool jumped){
         Vector3 distance = currentTurnPos - lastTurnPos;
         Vector3 roadPos = lastTurnPos + distance / 2f;
-        roadPos.y = roadHeightPos;
+        roadPos.y = -1*roadHeight/2;
         lastTurnPos = currentTurnPos;
 
         
-        Vector3 scale = new Vector3(distance.x+roadWidth, 1, distance.z+roadWidth);
+        Vector3 scale = new Vector3(distance.x+roadWidth, roadHeight, distance.z+roadWidth);
 
         
         GameObject road = Instantiate(testRoad, roadPos, transform.rotation);
@@ -161,13 +164,13 @@ public class GameCreator : MonoBehaviour {
 
             float extraLength = Mathf.Max(difference.x, difference.z) - overhangLenght;
             extraLength /= 2; // want er komt een stuk bij aan elke kant van de overhang
-            Vector3 extraRoadScale = direction * extraLength + new Vector3(roadWidth, 1, roadWidth);
+            Vector3 extraRoadScale = direction * extraLength + new Vector3(roadWidth, roadHeight, roadWidth);
             Vector3 centerRoad1 = startingOverheadPos + direction * extraLength / 2;
             centerRoad1.y = roadHeightPos;
             Vector3 centerRoad2 = pos - direction * extraLength / 2;
             centerRoad2.y = roadHeightPos;
             Vector3 centerOverHang = startingOverheadPos + difference / 2;
-            centerOverHang.y = roadHeightPos;
+            centerOverHang.y = -0.5f;
 
             GameObject road1 = Instantiate(testRoad, centerRoad1, transform.rotation);
             road1.transform.localScale = extraRoadScale;

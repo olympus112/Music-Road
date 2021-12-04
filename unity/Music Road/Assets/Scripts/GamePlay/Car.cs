@@ -25,6 +25,9 @@ public class Car : MonoBehaviour {
     private bool ducking;
     private bool gameEnded;
     private float speed;
+    private bool died;
+    private bool dying;
+    private int dyingCounter;
 
 
     //TODO : get the groundpos automatically here
@@ -40,7 +43,9 @@ public class Car : MonoBehaviour {
         movementdirection = Vector3.forward;
         goingForward = true;
         jumping = false;
-        gameEnded = false;
+        dying = false;
+        died = false;
+        dyingCounter = 0;
 
         transform.localScale = carDimensions;
     }
@@ -76,7 +81,14 @@ public class Car : MonoBehaviour {
         }
 
         // ------------------- Death trigger -------------------
-        if (transform.position.y < -10 && !gameEnded) {
+        if (transform.position.y < -0.5)
+            dying = true;
+
+        if (dying)
+            dyingCounter++;
+
+        if (dyingCounter >= 70 || (died && dyingCounter >= 7)) {
+            
             gameEnded = true;
             gameManager.endGame();
         }
@@ -118,12 +130,26 @@ public class Car : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision) {
         jumping = false;
+        if (collision.collider.tag == "Obstacle"){
+            dying = true;
+            died = true;
+        }
     /*    if (collision.gameObject.transform.name == "FinnishLine(Clone)") {
 
             FindObjectOfType<LevelProgressionMeter>().setSliderToMax();
             FindObjectOfType<GameManager>().endGame();
         }
     */            
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.collider.tag == "Obstacle")
+        {
+            dying = false;
+            died = false;
+            dyingCounter = 0;
+        }
     }
 
     public void revertPausedClick() {
@@ -133,5 +159,6 @@ public class Car : MonoBehaviour {
     public void setSpeed() {
         speed = playerSpeed;
     }
+
 
 }

@@ -151,4 +151,6 @@ public class GameManager : MonoBehaviour {
     public void addCoin() {
         coins++;
     }
+
+
 }

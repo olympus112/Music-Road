@@ -552,6 +552,11 @@ PrefabInstance:
         type: 3}
     - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}
+      propertyPath: roadHeight
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
+        type: 3}
       propertyPath: roadSpawner
       value: 
       objectReference: {fileID: 8976629456114892937, guid: 5bbe00e76e299de4dacd34af87f4c593,

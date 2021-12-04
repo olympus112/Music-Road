@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 15
-  jumpVelocity: 10
+  jumpVelocity: 15
   carDimensions: {x: 1.5, y: 1.5, z: 1.5}
 --- !u!95 &-7053074099884169724
 Animator:
