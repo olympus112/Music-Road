@@ -19,7 +19,7 @@ class AppData {
         icon: Icons.shuffle,
       ),
       difficulty: null,
-      scores: null,
+      percentages: null,
       colors: LevelColors(
         text: Colors.white,
         accent: Color(0xff2b2a3b),
@@ -36,7 +36,7 @@ class AppData {
         price: 300,
       ),
       difficulty: LevelDifficulty.easy,
-      scores: LevelScores(),
+      percentages: LevelScores(),
       colors: LevelColors(
         text: Colors.white,
         accent: Color(0xff9C93A7),
@@ -53,7 +53,7 @@ class AppData {
         price: 400,
       ),
       difficulty: LevelDifficulty.medium,
-      scores: LevelScores(),
+      percentages: LevelScores(),
       colors: LevelColors(
         text: Colors.white,
         accent: Color(0xff117d9e),
@@ -70,7 +70,7 @@ class AppData {
         price: 150,
       ),
       difficulty: LevelDifficulty.hard,
-      scores: LevelScores(),
+      percentages: LevelScores(),
       colors: LevelColors(
         text: Colors.white,
         accent: Color(0xffca5b61),
@@ -86,24 +86,24 @@ class AppData {
   ];
 
   static Map<String, dynamic> defaultUserSettingsData = {
-    UserSettingsData.levelVolume: 1.0,
-    UserSettingsData.fxVolume: 1.0,
+    UserSettingsData.levelVolume: true,
     UserSettingsData.showTutorial: true,
     UserSettingsData.tapControls: true,
   };
 
   static Map<String, dynamic> defaultUserData = {
     UserData.coins: 550,
+    UserData.lastPlayed: 1,
   };
 
   static void init() {
     final levels = Hive.box<UserLevelData>(Globals.levels);
-    if (levels.isEmpty) levels.addAll(AppData.defaultUserLevelData);
+    if (levels.isNotEmpty) levels.addAll(AppData.defaultUserLevelData);
 
     final settings = Hive.box(Globals.settings);
-    if (settings.isEmpty) settings.putAll(AppData.defaultUserSettingsData);
+    if (settings.isNotEmpty) settings.putAll(AppData.defaultUserSettingsData);
 
     final user = Hive.box(Globals.user);
-    if (user.isEmpty) user.putAll(AppData.defaultUserData);
+    if (user.isNotEmpty) user.putAll(AppData.defaultUserData);
   }
 }

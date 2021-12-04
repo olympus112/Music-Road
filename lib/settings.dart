@@ -10,9 +10,8 @@ import 'globals.dart';
 
 class SettingsDialog extends StatelessWidget {
   final int index;
-  final double heightFraction;
 
-  const SettingsDialog({Key? key, required this.index, this.heightFraction = 0.7}) : super(key: key);
+  const SettingsDialog({Key? key, required this.index}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,6 @@ class SettingsDialog extends StatelessWidget {
         child: ClipRRect(
           borderRadius: Globals.borderRadius,
           child: Stack(
-            fit: StackFit.expand,
             children: [
               background(),
               content(context),
@@ -48,111 +46,109 @@ class SettingsDialog extends StatelessWidget {
     return ValueListenableBuilder(
       valueListenable: Hive.box(Globals.settings).listenable(),
       builder: (context, Box box, child) {
-        return Positioned.fill(
-          bottom: 100,
-          child: Padding(
-            padding: const EdgeInsets.all(Globals.levelContentPadding),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Center(
+        return Padding(
+          padding: const EdgeInsets.all(Globals.levelContentPadding),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Center(
+                  child: Text(
+                    'Settings',
+                    style: TextStyle(color: AppData.levelData[index].colors.text, fontSize: 40),
+                  ),
+                ),
+                Divider(
+                  color: AppData.levelData[index].colors.text,
+                  thickness: 1,
+                ),
+                const SizedBox(height: 16),
+                VolumeSlider(
+                  index: index,
+                  title: 'Level volume',
+                  value: box.get(UserSettingsData.levelVolume),
+                  onChanged: (value) => box.put(UserSettingsData.levelVolume, value),
+                ),
+                VolumeSlider(
+                  index: index,
+                  title: 'FX volume',
+                  value: box.get(UserSettingsData.fxVolume),
+                  onChanged: (value) => box.put(UserSettingsData.fxVolume, value),
+                ),
+                const SizedBox(height: 16),
+                // Text(
+                //   'Controls',
+                //   style: TextStyle(
+                //     color: AppData.levelData[index].colors.text,
+                //     fontSize: Globals.fontSize,
+                //   ),
+                // ),
+                // const SizedBox(height: 8),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //   children: [
+                //     Column(
+                //       children: [
+                //         Widgets.button(
+                //           Icons.touch_app,
+                //           AppData.levelData[index].colors.accent,
+                //           () => box.put(UserSettingsData.tapControls, true),
+                //           box.get(UserSettingsData.tapControls) ? Colors.white : Colors.white54,
+                //         ),
+                //         const SizedBox(height: 4),
+                //         Text(
+                //           'Tap',
+                //           style: TextStyle(
+                //             color: box.get(UserSettingsData.tapControls) ? Colors.white : Colors.white54,
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //     Column(
+                //       children: [
+                //         Widgets.button(
+                //           Icons.swipe,
+                //           AppData.levelData[index].colors.accent,
+                //           () => box.put(UserSettingsData.tapControls, false),
+                //           box.get(UserSettingsData.tapControls) ? Colors.white54 : Colors.white,
+                //         ),
+                //         const SizedBox(height: 4),
+                //         Text(
+                //           'Swipe',
+                //           style: TextStyle(
+                //             color: box.get(UserSettingsData.tapControls) ? Colors.white54 : Colors.white,
+                //           ),
+                //         )
+                //       ],
+                //     ),
+                //   ],
+                // ),
+                // const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  child: TextButton(
+                    onPressed: () => showTutorial(context, AppData.levelData[index].colors.accent),
                     child: Text(
-                      'Settings',
-                      style: TextStyle(color: AppData.levelData[index].colors.text, fontSize: 40),
+                      'Show tutorial',
+                      style: TextStyle(
+                        color: AppData.levelData[index].colors.text,
+                        fontSize: 20,
+                      ),
                     ),
-                  ),
-                  Divider(
-                    color: AppData.levelData[index].colors.text,
-                    thickness: 1,
-                  ),
-                  const SizedBox(height: 16),
-                  VolumeSlider(
-                    index: index,
-                    title: 'Level volume',
-                    value: box.get(UserSettingsData.levelVolume),
-                    onChanged: (value) => box.put(UserSettingsData.levelVolume, value),
-                  ),
-                  VolumeSlider(
-                    index: index,
-                    title: 'FX volume',
-                    value: box.get(UserSettingsData.fxVolume),
-                    onChanged: (value) => box.put(UserSettingsData.fxVolume, value),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Controls',
-                    style: TextStyle(
-                      color: AppData.levelData[index].colors.text,
-                      fontSize: Globals.fontSize,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Column(
-                        children: [
-                          Widgets.button(
-                            Icons.touch_app,
-                            AppData.levelData[index].colors.accent,
-                            () => box.put(UserSettingsData.tapControls, true),
-                            box.get(UserSettingsData.tapControls) ? Colors.white : Colors.white54,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Tap',
-                            style: TextStyle(
-                              color: box.get(UserSettingsData.tapControls) ? Colors.white : Colors.white54,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Widgets.button(
-                            Icons.swipe,
-                            AppData.levelData[index].colors.accent,
-                            () => box.put(UserSettingsData.tapControls, false),
-                            box.get(UserSettingsData.tapControls) ? Colors.white54 : Colors.white,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Swipe',
-                            style: TextStyle(
-                              color: box.get(UserSettingsData.tapControls) ? Colors.white54 : Colors.white,
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: TextButton(
-                      onPressed: () => showTutorial(context, AppData.levelData[index].colors.accent),
-                      child: Text(
-                        'Show tutorial',
-                        style: TextStyle(
-                          color: AppData.levelData[index].colors.text,
-                          fontSize: 20,
-                        ),
-                      ),
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.resolveWith(
-                          (states) => RoundedRectangleBorder(
-                            side: BorderSide(color: AppData.levelData[index].colors.accent),
-                            borderRadius: Globals.borderRadius,
-                          ),
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.resolveWith(
+                        (states) => RoundedRectangleBorder(
+                          side: BorderSide(color: AppData.levelData[index].colors.accent),
+                          borderRadius: Globals.borderRadius,
                         ),
                       ),
                     ),
                   ),
-                  ...debug(),
-                ],
-              ),
+                ),
+                ...debug(),
+              ],
             ),
           ),
         );
@@ -180,7 +176,7 @@ class SettingsDialog extends StatelessWidget {
 
   List<Widget> debug() {
     return [
-      const SizedBox(height: 100),
+      const SizedBox(height: 400),
       const SizedBox(height: 16),
       Text(
         'Debug',
@@ -255,6 +251,21 @@ class SettingsDialog extends StatelessWidget {
           ),
         ],
       ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            onPressed: () {
+              Hive.box(Globals.user).putAll(AppData.defaultUserData);
+            },
+            child: Text(
+              'Reset user',
+              style: TextStyle(color: AppData.levelData[index].colors.text),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 100),
     ];
   }
 }

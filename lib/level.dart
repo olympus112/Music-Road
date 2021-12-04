@@ -131,7 +131,7 @@ class Level extends StatelessWidget {
           builder: (context, Box<UserLevelData> box, child) {
             return LevelMedal(
               score: box.getAt(info.index)?.score,
-              scores: AppData.levelData[info.index].scores,
+              scores: AppData.levelData[info.index].percentages,
             );
           },
         ),
@@ -140,7 +140,7 @@ class Level extends StatelessWidget {
   }
 
   Widget statistics(BuildContext context) {
-    if (AppData.levelData[info.index].scores == null) return const SizedBox.shrink();
+    if (AppData.levelData[info.index].percentages == null) return const SizedBox.shrink();
 
     return Positioned(
       right: Globals.levelContentPadding - 5,

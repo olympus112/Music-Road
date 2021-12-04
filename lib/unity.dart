@@ -13,9 +13,7 @@ import 'package:musicroad/userdata.dart';
 import 'package:musicroad/view.dart';
 
 class UnityPlayer extends StatefulWidget {
-  final int levelIndex;
-
-  const UnityPlayer({Key? key, required this.levelIndex}) : super(key: key);
+  const UnityPlayer({Key? key}) : super(key: key);
 
   @override
   State<UnityPlayer> createState() => UnityPlayerState();
@@ -55,7 +53,6 @@ class UnityPlayerState extends State<UnityPlayer> {
   }
 
   void onUnityCreated(BuildContext context, UnityWidgetController controller) {
-    print('Unity created');
     this.controller = controller;
     showMenu(context);
   }
@@ -65,112 +62,170 @@ class UnityPlayerState extends State<UnityPlayer> {
     final action = json['action'];
 
     print('message received: $json');
+
     if (action == 'pauze') {
-      showDialog(
-        barrierDismissible: false,
-        barrierColor: Colors.black87,
-        context: context,
-        builder: (context) {
-          return PauzeDialog(
-            index: widget.levelIndex,
-            level: AppData.levelData[widget.levelIndex].song.title,
-            score: (json['score'] as double).round(),
-            percentage: json['percentage'] as double,
-            onMenu: () {
-              Navigator.pop(context);
-              showMenu(context);
-            },
-            onReplay: () {
-              Navigator.pop(context);
-              replayLevel(widget.levelIndex);
-            },
-            onResume: () {
-              Navigator.pop(context);
-              resumeLevel();
-            },
-          );
-        },
-      );
-    } else if (action == 'stop') {
-      final level = Hive.box<UserLevelData>(Globals.levels).getAt(1)!;
-      level.score = max((json['score'] as double).round(), level.score);
-      level.timesPlayed += 1;
-      level.timesLost += json['percentage'] != 1.0 ? 1 : 0;
-      level.timesWon += json['percentage'] == 1.0 ? 1 : 0;
-      level.save();
-
-      final user = Hive.box(Globals.user);
-      user.put(UserData.coins, user.get(UserData.coins) + json['coins'] as int);
-
-      showDialog(
-        barrierDismissible: false,
-        barrierColor: Colors.black87,
-        context: context,
-        builder: (context) {
-          return GameOverDialog(
-            index: widget.levelIndex,
-            title: json['percentage'] == 1.0 ? 'Level finished!' : 'Game over',
-            score: (json['score'] as double).round(),
-            coins: json['coins'] as int,
-            percentage: json['percentage'] as double,
-            onMenu: () {
-              Navigator.pop(context);
-              showMenu(context);
-            },
-            onReplay: () {
-              Navigator.pop(context);
-              replayLevel(widget.levelIndex);
-            },
-          );
-        },
-      );
+      onPauze(json);
+    } else {
+      if (action == 'stop') onStop(json);
     }
   }
 
-  void onUnitySceneLoaded(BuildContext context, SceneLoaded? scene) {
-    print('Loaded: ${scene?.name}, ${scene?.buildIndex}, ${scene?.isValid}');
+  void onUnitySceneLoaded(BuildContext context, SceneLoaded? scene) {}
+  void onUnityUnloaded() {}
+
+  void onPauze(json) {
+    // Get parameters
+    int unityIndex = Hive.box(Globals.user).get(UserData.lastPlayed);
+    double percentage = json['percentage'];
+    int coins = json['coins'];
+    int score = calculateScore(percentage, coins);
+
+    // Show pauze
+    showPauze(
+      unityIndex + 1,
+      score,
+      coins,
+      percentage,
+    );
   }
 
-  void onUnityUnloaded() {
-    print('Unloaded');
+  void onStop(json) {
+    // Get parameters
+    bool won = json['won'];
+    int coins = json['coins'];
+    double percentage = json['percentage'];
+    int score = calculateScore(percentage, coins);
+
+    // Get data for dialog
+    final user = Hive.box(Globals.user);
+    user.put(UserData.coins, user.get(UserData.coins) + coins);
+    final lastPlayed = user.get(UserData.lastPlayed);
+
+    // Show gameover
+    showGameOver(
+      lastPlayed + 1,
+      won ? 'Level finished!' : 'Game over',
+      score,
+      coins,
+      percentage,
+    );
+
+    // Update statistics
+    final level = Hive.box<UserLevelData>(Globals.levels).getAt(lastPlayed + 1)!;
+    level.score = max(score, level.score);
+    level.timesPlayed += 1;
+    level.timesLost += won ? 0 : 1;
+    level.timesWon += won ? 1 : 0;
+    level.secondsPlayed += calculateSeconds(AppData.levelData[lastPlayed + 1].song.time);
+    level.save();
   }
 
-  void startLevel(int index) {
-    print('Started level: $index');
-    controller.postMessage('GameManager', 'startGame', index.toString());
+  void unityStartLevel(int index) {
+    // API
+    final box = Hive.box(Globals.settings);
+    final json = jsonEncode({
+      'index': index,
+      'sound': box.get(UserSettingsData.levelVolume) ? '1' : '0',
+      'tap': box.get(UserSettingsData.tapControls) ? '1' : '0',
+    });
+
+    controller.postMessage('GameManager', 'flutterStartGame', json);
   }
 
-  void resumeLevel() {
-    print('Resumed level');
-    controller.postMessage('GameManager', 'resumeGame', '');
+  void unityResumeLevel() {
+    // API
+    controller.postMessage('GameManager', 'flutterResumeGame', '');
   }
 
-  void replayLevel(int index) {
-    print('Replay level');
-    controller.postMessage('GameManager', 'restartGame', index.toString());
+  void unityReplayLevel(int index) {
+    // API
+    unityStartLevel(index);
   }
 
   void showMenu(BuildContext context) {
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.black,
-      useSafeArea: true,
       context: context,
       builder: (context) => const View(),
     );
 
     final settings = Hive.box(Globals.settings);
     if (settings.get(UserSettingsData.showTutorial)) {
-      showDialog(
-        barrierDismissible: false,
-        barrierColor: Colors.black,
-        useSafeArea: true,
-        context: context,
-        builder: (context) => const Tutorial(
-          color: Color(0xff9481f0),
-        ),
-      );
+      showTutorial();
       settings.put(UserSettingsData.showTutorial, false);
     }
+  }
+
+  void showTutorial() {
+    showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black,
+      context: context,
+      builder: (context) => const Tutorial(
+        color: Color(0xff9481f0),
+      ),
+    );
+  }
+
+  void showGameOver(int flutterIndex, String title, int score, int coins, double percentage) {
+    showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black87,
+      context: context,
+      builder: (context) {
+        return GameOverDialog(
+          index: flutterIndex,
+          title: title,
+          score: score,
+          coins: coins,
+          percentage: percentage,
+          onMenu: () {
+            Navigator.pop(context);
+            showMenu(context);
+          },
+          onReplay: () {
+            Navigator.pop(context);
+            unityReplayLevel(flutterIndex - 1);
+          },
+        );
+      },
+    );
+  }
+
+  void showPauze(int flutterIndex, int score, int coins, double percentage) {
+    showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black87,
+      context: context,
+      builder: (context) {
+        return PauzeDialog(
+          index: flutterIndex,
+          percentage: percentage,
+          score: score,
+          onMenu: () {
+            Navigator.pop(context);
+            showMenu(context);
+          },
+          onReplay: () {
+            Navigator.pop(context);
+            unityReplayLevel(flutterIndex - 1);
+          },
+          onResume: () {
+            Navigator.pop(context);
+            unityResumeLevel();
+          },
+        );
+      },
+    );
+  }
+
+  int calculateScore(double percentage, int coins) {
+    return (percentage * 1000 + coins * 10).round();
+  }
+
+  int calculateSeconds(String time) {
+    final parts = time.split(':');
+    return 60 * int.parse(parts[0]) + int.parse(parts[1]);
   }
 }

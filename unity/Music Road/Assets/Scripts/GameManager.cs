@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,20 +14,14 @@ public class GameManager : MonoBehaviour {
     [SerializeField]
     GameObject tapToStartCanvas;
 
-
-
-    public bool recentleyPaused;
-
+    private static UnityMessageManager messenger;
     private AudioSource audioSource;
     private Car player;
-
-
-    private static UnityMessageManager messenger;
+    
     public int coins;
     public bool paused;
 
     private GameObject currentlyLoadedLevel;
-
     private LevelLister levelList;
 
     private void Start() {
@@ -37,13 +32,6 @@ public class GameManager : MonoBehaviour {
 
         Time.timeScale = 0;
         paused = true;
-        
-        Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
-            {"action", "load"},
-        };
-
-        var message = JsonConvert.SerializeObject(parameters);
-        messenger.SendMessageToFlutter(message);
 
         levelList = GetComponent<LevelLister>();
 
@@ -52,29 +40,35 @@ public class GameManager : MonoBehaviour {
     }
 
     private void Restart(int index = 0) {
+        print("GamerManager::Restart " + index);
+        
         Time.timeScale = 1;
         paused = false;
         coins = 0;
         audioSource.Stop();
 
         tapToStartCanvas.SetActive(true);
-
+        
+        // Remove current level
+        if (currentlyLoadedLevel)
+            Destroy(currentlyLoadedLevel);
+        
+        // Remove player
         if (player)
             Destroy(player.gameObject);
-
-        print(car.getStartingPosition(new Vector3(0, 0, -5)));
-        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, -5)), transform.rotation) as Car;
-        print(player.transform.position);
-        FindObjectOfType<CameraMovement>().setPlayer(player);
-
+        
+        // Reset slider
         FindObjectOfType<LevelProgressionMeter>().resetSlider();
-
+        
+        // Init level
         if (levelList) {
             currentlyLoadedLevel = Instantiate(levelList.getLevel(index), transform.position, transform.rotation);
-
             audioSource.clip = levelList.getSong(index);
         }
-            
+        
+        // Init player
+        player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, -5)), transform.rotation) as Car;
+        FindObjectOfType<CameraMovement>().setPlayer(player);
     }
 
     public void tapToStart() {
@@ -87,7 +81,7 @@ public class GameManager : MonoBehaviour {
     }
 
     // Called from Unity
-    public void endGame() {
+    public void endGame(bool won = false) {
         print("Unity::endLevel");
 
         Time.timeScale = 0;
@@ -96,41 +90,35 @@ public class GameManager : MonoBehaviour {
 
         LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
         double percentage = meter.distanceCovered / meter.totalDistance;
-        print("Meter found " + meter);
 
         Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
             {"action", "stop"},
-            {"percentage", percentage},
-            {"score", percentage * 1000},
-            {"coins", coins}
+            {"percentage", won ? 1.0 : percentage},
+            {"coins", coins},
+            {"won", won}
         };
 
         var message = JsonConvert.SerializeObject(parameters);
         messenger.SendMessageToFlutter(message);
-
-        Destroy(currentlyLoadedLevel);
-
-
+        
         if(!levelList)
             Restart();
     }
 
     // Called from Unity
     public void pauseGame() {
-        audioSource.Pause();
-
         print("Unity::pauzeLevel");
-
+        
+        audioSource.Pause();
         Time.timeScale = 0;
         paused = true;
 
         LevelProgressionMeter meter = FindObjectOfType<LevelProgressionMeter>();
-        print("Meter found " + meter);
         double percentage = meter.distanceCovered / meter.totalDistance;
         Dictionary<string, dynamic> parameters = new Dictionary<string, dynamic> {
             {"action", "pauze"},
             {"percentage", percentage},
-            {"score", percentage * 1000}
+            {"coins", coins}
         };
 
         var message = JsonConvert.SerializeObject(parameters);
@@ -138,8 +126,8 @@ public class GameManager : MonoBehaviour {
     }
 
     // Called from Flutter
-    public void resumeGame(string message) {
-        print("Unity::resumeLevel");
+    public void flutterResumeGame(string message) {
+        print("Unity::resumeLevel " + message);
 
         audioSource.Play(0);
 
@@ -148,17 +136,16 @@ public class GameManager : MonoBehaviour {
     }
 
     // Called from Flutter
-    public void startGame(string message) {
+    public void flutterStartGame(string message) {
         print("Unity::startLevel " + message);
-
-        Restart();
-    }
-
-    // Called from Flutter
-    public void restartGame(string message) {
-        print("Unity::restartGame");
-
-        Restart();
+        
+        var json = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
+        
+        int index = Int32.Parse(json["index"]);
+        bool sound = Int32.Parse(json["sound"]) != 0;
+        bool tapControls = Int32.Parse(json["tap"]) != 0;
+        
+        Restart(index);
     }
 
     public void addCoin() {

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flip_card/flip_card.dart';
 import 'package:flip_card/flip_card_controller.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +47,7 @@ class ViewState extends State<View> {
       for (final _ in AppData.levelData) FlipCardController(),
     ];
 
-    currentIndex = 1;
+    currentIndex = Hive.box(Globals.user).get(UserData.lastPlayed);
     currentTitle = getTitle(false);
     currentBackground = getBackground();
 
@@ -152,7 +154,7 @@ class ViewState extends State<View> {
       }),
       transformer: PageTransformerBuilder(
         builder: (child, info) {
-          return AppData.levelData[info.index].scores == null
+          return AppData.levelData[info.index].percentages == null
               ? Level(info: info)
               : FlipCard(
                   controller: flipControllers[info.index],
@@ -185,9 +187,17 @@ class ViewState extends State<View> {
   }
 
   void onPlay(int index) {
+    // Convert to level index
+    if (index == 0) {
+      int randomLevel = Random().nextInt(AppData.levelData.length - 1);
+      Hive.box(Globals.user).put(UserData.lastPlayed, randomLevel);
+    } else {
+      index -= 1;
+    }
+
     print('Trying to play $index');
     Navigator.of(context).pop();
-    App.unity.currentState!.startLevel(index);
+    App.unity.currentState!.unityStartLevel(index);
   }
 
   void onBuy() {

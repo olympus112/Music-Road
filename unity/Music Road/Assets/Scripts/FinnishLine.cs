@@ -13,11 +13,11 @@ public class FinnishLine : MonoBehaviour {
 
     private void OnTriggerEnter(Collider other)
     {
-        FindObjectOfType<GameManager>().endGame();
+        FindObjectOfType<GameManager>().endGame(true);
     }
 
     private void OnCollisionEnter(Collision collision) {
-        FindObjectOfType<GameManager>().endGame();
+        FindObjectOfType<GameManager>().endGame(true);
     }
     
 }

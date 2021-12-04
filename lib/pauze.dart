@@ -8,10 +8,8 @@ import 'package:musicroad/widgets.dart';
 
 class PauzeDialog extends StatelessWidget {
   final int index;
-
-  final String level;
-  final double percentage;
   final int score;
+  final double percentage;
   final VoidCallback onResume;
   final VoidCallback onMenu;
   final VoidCallback onReplay;
@@ -19,9 +17,8 @@ class PauzeDialog extends StatelessWidget {
   const PauzeDialog({
     Key? key,
     required this.index,
-    required this.level,
-    required this.percentage,
     required this.score,
+    required this.percentage,
     required this.onReplay,
     required this.onResume,
     required this.onMenu,
@@ -118,8 +115,8 @@ class PauzeDialog extends StatelessWidget {
               ),
             ),
             LevelProgress(
-              score: score,
-              scores: AppData.levelData[index].scores!,
+              score: percentage,
+              scores: AppData.levelData[index].percentages!,
               color: AppData.levelData[index].colors.accent,
             ),
           ],

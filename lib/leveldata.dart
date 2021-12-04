@@ -8,14 +8,14 @@ enum LevelDifficulty {
 }
 
 class LevelScores {
-  final int bronze;
-  final int silver;
-  final int gold;
+  final double bronze;
+  final double silver;
+  final double gold;
 
   const LevelScores({
-    this.bronze = 500,
-    this.silver = 700,
-    this.gold = 1000,
+    this.bronze = 0.5,
+    this.silver = 0.7,
+    this.gold = 1.0,
   });
 }
 
@@ -53,13 +53,13 @@ class LevelColors {
 
 class LevelData {
   final SongData song;
-  final LevelScores? scores;
+  final LevelScores? percentages;
   final LevelDifficulty? difficulty;
   final LevelColors colors;
 
   const LevelData({
     required this.song,
-    required this.scores,
+    required this.percentages,
     required this.difficulty,
     required this.colors,
   });

@@ -31,8 +31,6 @@ public class Car : MonoBehaviour {
 
     // Start is called before the first frame update
     void Start() {
-
-
         gameManager = FindObjectOfType<GameManager>();
         slider = FindObjectOfType<LevelProgressionMeter>();
 
@@ -129,7 +127,6 @@ public class Car : MonoBehaviour {
     }
 
     public void revertPausedClick() {
-        gameManager.recentleyPaused = false;
         changeDirection();
     }
 

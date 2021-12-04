@@ -114,7 +114,7 @@ class GameOverDialog extends StatelessWidget {
                 return LevelMedal(
                   size: 80,
                   score: score,
-                  scores: AppData.levelData[index].scores,
+                  scores: AppData.levelData[index].percentages,
                   padding: const EdgeInsets.all(16),
                   highscore: score > (box.getAt(index)?.score ?? double.infinity),
                 );
@@ -133,8 +133,8 @@ class GameOverDialog extends StatelessWidget {
               padding: const EdgeInsets.all(16),
             ),
             LevelProgress(
-              score: score,
-              scores: AppData.levelData[index].scores!,
+              score: percentage,
+              scores: AppData.levelData[index].percentages!,
               color: AppData.levelData[index].colors.accent,
             ),
           ],

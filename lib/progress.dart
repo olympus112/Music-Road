@@ -3,7 +3,7 @@ import 'package:musicroad/globals.dart';
 import 'package:musicroad/leveldata.dart';
 
 class LevelProgress extends StatelessWidget {
-  final int score;
+  final double score;
   final LevelScores scores;
   final Color color;
   final EdgeInsets padding;
@@ -18,7 +18,6 @@ class LevelProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (score / scores.gold).clamp(0.0, 1.0);
     return SizedBox(
       height: Globals.medalSize,
       child: Padding(
@@ -36,7 +35,7 @@ class LevelProgress extends StatelessWidget {
                   child: CustomPaint(
                     size: Size(constraints.maxWidth, constraints.maxHeight / 3),
                     painter: LevelProgressPainter(
-                      progress: progress,
+                      progress: score,
                       outline: Colors.white70,
                       active: color,
                       inactive: color.withOpacity(0.3),
@@ -68,9 +67,9 @@ class LevelProgress extends StatelessWidget {
                   ),
                 ),
                 Transform.translate(
-                  offset: Offset(constraints.maxWidth * progress - 15, -yOffset * 2),
+                  offset: Offset(constraints.maxWidth * score - 15, -yOffset * 2),
                   child: Text(
-                    '${(progress * 100).round()}%',
+                    '${(score * 100).round()}%',
                     style: const TextStyle(color: Colors.white70),
                   ),
                 ),

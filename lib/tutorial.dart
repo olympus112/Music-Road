@@ -8,15 +8,6 @@ import 'package:musicroad/globals.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/utils.dart';
 
-class Tutorial extends StatefulWidget {
-  final Color color;
-
-  const Tutorial({Key? key, required this.color}) : super(key: key);
-
-  @override
-  State<Tutorial> createState() => TutorialState();
-}
-
 class SineTween extends Tween<double> {
   final double offset;
   final double amplitude;
@@ -27,6 +18,15 @@ class SineTween extends Tween<double> {
   double lerp(double t) {
     return offset + amplitude * (0.5 + 0.5 * sin(super.lerp(t)));
   }
+}
+
+class Tutorial extends StatefulWidget {
+  final Color color;
+
+  const Tutorial({Key? key, required this.color}) : super(key: key);
+
+  @override
+  State<Tutorial> createState() => TutorialState();
 }
 
 class TutorialState extends State<Tutorial> with SingleTickerProviderStateMixin {
@@ -45,7 +45,7 @@ class TutorialState extends State<Tutorial> with SingleTickerProviderStateMixin 
   Widget build(BuildContext context) {
     return IntroductionScreen(
       pages: [
-        controlTypePage(context),
+        //controlTypePage(context),
         controlsPage(context),
         jumpPage(context),
         duckPage(context),
@@ -130,7 +130,12 @@ class TutorialState extends State<Tutorial> with SingleTickerProviderStateMixin 
           },
         ),
       ),
-      bodyWidget: card('images/tap.png', Icons.touch_app),
+      bodyWidget: ValueListenableBuilder(
+        valueListenable: Hive.box(Globals.settings).listenable(),
+        builder: (context, Box box, child) {
+          return card('images/tap.png', box.get(UserSettingsData.tapControls) ? Icons.touch_app : Icons.swipe);
+        },
+      ),
     );
   }
 

@@ -35,7 +35,7 @@ class App extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => UnityPlayer(key: unity, levelIndex: 1),
+        '/': (context) => UnityPlayer(key: unity),
       },
       builder: (context, child) => Scaffold(
         body: child,

@@ -50,11 +50,11 @@ class UserLevelData extends HiveObject {
 
 class UserData {
   static const String coins = 'coins';
+  static const String lastPlayed = 'lastPlayed';
 }
 
 class UserSettingsData {
   static const String levelVolume = 'levelVolume';
-  static const String fxVolume = 'fxVolume';
   static const String showTutorial = 'showTutorial';
   static const String tapControls = 'tapControls';
 }
