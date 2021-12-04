@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/appdata.dart';
+import 'package:musicroad/backend.dart';
 import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/pauze.dart';
@@ -120,26 +121,28 @@ class UnityPlayerState extends State<UnityPlayer> {
     level.save();
   }
 
-  void unityStartLevel(int index) {
-    // API
-    final box = Hive.box(Globals.settings);
+  Future<void> unityStartLevel(int unityIndex, [bool random = false]) async {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Loading level...', textAlign: TextAlign.center)));
+
+    final settings = Hive.box(Globals.settings);
+    final user = Hive.box(Globals.user);
+
+    final id = await Backend.createGame(unityIndex, random, settings.get(UserSettingsData.levelVolume));
+    user.put(UserData.game, id);
+
+    ScaffoldMessenger.of(context).clearSnackBars();
+
     final json = jsonEncode({
-      'index': index,
-      'sound': box.get(UserSettingsData.levelVolume) ? '1' : '0',
-      'tap': box.get(UserSettingsData.tapControls) ? '1' : '0',
+      'index': unityIndex.toString(),
+      'sound': settings.get(UserSettingsData.levelVolume) ? '1' : '0',
+      'tap': settings.get(UserSettingsData.tapControls) ? '1' : '0',
     });
 
     controller.postMessage('GameManager', 'flutterStartGame', json);
   }
 
   void unityResumeLevel() {
-    // API
     controller.postMessage('GameManager', 'flutterResumeGame', '');
-  }
-
-  void unityReplayLevel(int index) {
-    // API
-    unityStartLevel(index);
   }
 
   void showMenu(BuildContext context) {
@@ -162,13 +165,15 @@ class UnityPlayerState extends State<UnityPlayer> {
       barrierDismissible: false,
       barrierColor: Colors.black,
       context: context,
-      builder: (context) => const Tutorial(
-        color: Color(0xff9481f0),
+      builder: (context) => Tutorial(
+        color: const Color(0xff9481f0),
+        questionaire: true,
       ),
     );
   }
 
   void showGameOver(int flutterIndex, String title, int score, int coins, double percentage) {
+    final id = Hive.box(Globals.user).get(UserData.game);
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.black87,
@@ -182,11 +187,13 @@ class UnityPlayerState extends State<UnityPlayer> {
           percentage: percentage,
           onMenu: () {
             Navigator.pop(context);
+            Backend.menuGame(id, percentage, ActionOrigin.gameover).then((_) => Backend.endGame(id, percentage, score, coins));
             showMenu(context);
           },
           onReplay: () {
             Navigator.pop(context);
-            unityReplayLevel(flutterIndex - 1);
+            Backend.replayGame(id, percentage, ActionOrigin.gameover).then((_) => Backend.endGame(id, percentage, score, coins));
+            unityStartLevel(flutterIndex - 1);
           },
         );
       },
@@ -194,6 +201,9 @@ class UnityPlayerState extends State<UnityPlayer> {
   }
 
   void showPauze(int flutterIndex, int score, int coins, double percentage) {
+    final id = Hive.box(Globals.user).get(UserData.game);
+    Backend.pauseGame(id, percentage, ActionOrigin.pauze);
+
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.black87,
@@ -205,14 +215,17 @@ class UnityPlayerState extends State<UnityPlayer> {
           score: score,
           onMenu: () {
             Navigator.pop(context);
+            Backend.menuGame(id, percentage, ActionOrigin.pauze).then((value) => Backend.endGame(id, percentage, score, coins)).then((_) => Backend.endGame(id, percentage, score, coins));
             showMenu(context);
           },
           onReplay: () {
             Navigator.pop(context);
-            unityReplayLevel(flutterIndex - 1);
+            Backend.replayGame(id, percentage, ActionOrigin.pauze).then((_) => Backend.endGame(id, percentage, score, coins));
+            unityStartLevel(flutterIndex - 1);
           },
           onResume: () {
             Navigator.pop(context);
+            Backend.resumeGame(id, percentage);
             unityResumeLevel();
           },
         );

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:musicroad/leveldata.dart';
@@ -88,7 +90,7 @@ class AppData {
   static Map<String, dynamic> defaultUserSettingsData = {
     UserSettingsData.levelVolume: true,
     UserSettingsData.showTutorial: true,
-    UserSettingsData.tapControls: true,
+    UserSettingsData.debug: false,
   };
 
   static Map<String, dynamic> defaultUserData = {
@@ -98,12 +100,28 @@ class AppData {
 
   static void init() {
     final levels = Hive.box<UserLevelData>(Globals.levels);
-    if (levels.isNotEmpty) levels.addAll(AppData.defaultUserLevelData);
+    if (levels.isEmpty) levels.addAll(AppData.defaultUserLevelData);
 
     final settings = Hive.box(Globals.settings);
-    if (settings.isNotEmpty) settings.putAll(AppData.defaultUserSettingsData);
+    for (final entry in defaultUserSettingsData.entries) {
+      if (!settings.containsKey(entry.key)) {
+        settings.put(entry.key, entry.value);
+      } else if (settings.get(entry.key).runtimeType != entry.value.runtimeType) {
+        settings.put(entry.key, entry.value);
+      }
+    }
 
     final user = Hive.box(Globals.user);
-    if (user.isNotEmpty) user.putAll(AppData.defaultUserData);
+    for (final entry in defaultUserData.entries) {
+      if (!user.containsKey(entry.key)) {
+        user.put(entry.key, entry.value);
+      } else if (user.get(entry.key).runtimeType != entry.value.runtimeType) {
+        user.put(entry.key, entry.value);
+      }
+    }
+
+    if (!settings.containsKey(UserSettingsData.tapControls)) {
+      settings.put(UserSettingsData.tapControls, Random(DateTime.now().millisecondsSinceEpoch).nextBool());
+    }
   }
 }

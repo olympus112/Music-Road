@@ -56,16 +56,19 @@ class ViewState extends State<View> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black,
-      child: Stack(
-        children: [
-          background(),
-          content(context),
-          arrows(),
-          Widgets.coins(),
-          Widgets.settings(context, currentIndex),
-        ],
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Material(
+        color: Colors.black,
+        child: Stack(
+          children: [
+            background(),
+            content(context),
+            arrows(),
+            Widgets.coins(),
+            Widgets.settings(context, currentIndex),
+          ],
+        ),
       ),
     );
   }
@@ -186,18 +189,14 @@ class ViewState extends State<View> {
     );
   }
 
-  void onPlay(int index) {
-    // Convert to level index
-    if (index == 0) {
-      int randomLevel = Random().nextInt(AppData.levelData.length - 1);
-      Hive.box(Globals.user).put(UserData.lastPlayed, randomLevel);
-    } else {
-      index -= 1;
-    }
+  void onPlay(int flutterIndex) {
+    // Convert to unity index
+    bool random = flutterIndex == 0;
+    int unityIndex = random ? Random().nextInt(AppData.levelData.length - 1) : flutterIndex - 1;
+    Hive.box(Globals.user).put(UserData.lastPlayed, unityIndex);
 
-    print('Trying to play $index');
     Navigator.of(context).pop();
-    App.unity.currentState!.unityStartLevel(index);
+    App.unity.currentState!.unityStartLevel(unityIndex, random);
   }
 
   void onBuy() {
