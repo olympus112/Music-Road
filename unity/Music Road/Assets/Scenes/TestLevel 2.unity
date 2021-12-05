@@ -640,7 +640,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1199069052, guid: f176e0bf64470c4489abb25bcbbc6bfb, type: 3}
       propertyPath: Mute
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3466223669922052234, guid: f176e0bf64470c4489abb25bcbbc6bfb,
         type: 3}

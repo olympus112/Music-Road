@@ -30,11 +30,15 @@ public class GameManager : MonoBehaviour {
     private GameObject currentlyLoadedLevel;
     private LevelLister levelList;
 
+    private GameObject pauseButton;
+
     private void Start() {
         print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
 
         messenger = GetComponent<UnityMessageManager>();
         audioSource = GetComponent<AudioSource>();
+
+        pauseButton = gameCanvas.transform.Find("Button").gameObject;
 
         Time.timeScale = 0;
         paused = true;
@@ -54,9 +58,13 @@ public class GameManager : MonoBehaviour {
         audioSource.Stop();
         audioSource.mute = mute;
 
+        pauseButton.SetActive(false);
         tapToStartCanvas.SetActive(true);
 
-        gameCanvas.SetActive(false);
+        // Reset slider
+        FindObjectOfType<LevelProgressionMeter>().resetSlider();
+
+
 
         // Remove current level
         if (currentlyLoadedLevel)
@@ -66,8 +74,7 @@ public class GameManager : MonoBehaviour {
         if (player)
             Destroy(player.gameObject);
         
-        // Reset slider
-        FindObjectOfType<LevelProgressionMeter>().resetSlider();
+
         
         // Init level
         if (levelList) {
@@ -89,7 +96,7 @@ public class GameManager : MonoBehaviour {
         player.setSpeed();
 
         tapToStartCanvas.SetActive(false);
-        gameCanvas.SetActive(true);
+        pauseButton.SetActive(true);
     }
 
     // Called from Unity
