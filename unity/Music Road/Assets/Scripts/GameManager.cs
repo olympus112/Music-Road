@@ -55,7 +55,9 @@ public class GameManager : MonoBehaviour {
         audioSource.mute = mute;
 
         tapToStartCanvas.SetActive(true);
-        
+
+        gameCanvas.SetActive(false);
+
         // Remove current level
         if (currentlyLoadedLevel)
             Destroy(currentlyLoadedLevel);
@@ -87,6 +89,7 @@ public class GameManager : MonoBehaviour {
         player.setSpeed();
 
         tapToStartCanvas.SetActive(false);
+        gameCanvas.SetActive(true);
     }
 
     // Called from Unity

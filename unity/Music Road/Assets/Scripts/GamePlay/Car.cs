@@ -69,13 +69,13 @@ public class Car : MonoBehaviour {
 
         // ------------------- Input -------------------
         
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0) && !gameEnded) {
             startMousePosition = Input.mousePosition;
             swiping = true;
             swiped = false;
         }
 
-        if (swiping && !gameManager.paused && speed != 0) {
+        if (swiping && !gameManager.paused && speed != 0 && !gameEnded) {
             Vector3 diff = Input.mousePosition - startMousePosition;
             if (diff.y >= requiredDistanceForSwipe) {
                 jump();
@@ -102,7 +102,7 @@ public class Car : MonoBehaviour {
         }
 
         // end of swipe or click
-        if (Input.GetMouseButtonUp(0) && !swiped ) {
+        if (Input.GetMouseButtonUp(0) && !swiped && !gameEnded) {
             if (speed == 0)
                 gameManager.tapToStart();
             else if (!gameManager.paused && tapToPlay) {
