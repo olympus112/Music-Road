@@ -12,6 +12,9 @@ public class Car : MonoBehaviour {
     [SerializeField]
     Vector3 carDimensions = new Vector3(1.5f, 1.5f, 1.5f);
 
+    [SerializeField]
+    float requiredDistanceForSwipe = 20f;
+
     private GameManager gameManager;
     private LevelProgressionMeter slider;
 
@@ -23,11 +26,13 @@ public class Car : MonoBehaviour {
     private bool goingForward;
     private bool jumping;
     private bool ducking;
-    private bool gameEnded;
     private float speed;
     private bool died;
     private bool dying;
     private int dyingCounter;
+    private bool swiping;
+    private bool swiped;
+    private bool tapToPlay;
 
 
     //TODO : get the groundpos automatically here
@@ -46,6 +51,9 @@ public class Car : MonoBehaviour {
         dying = false;
         died = false;
         dyingCounter = 0;
+        swiped = false;
+        swiping = false;
+        tapToPlay = true;
 
         transform.localScale = carDimensions;
     }
@@ -59,24 +67,46 @@ public class Car : MonoBehaviour {
 
         // ------------------- Input -------------------
         
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0)) {
             startMousePosition = Input.mousePosition;
+            swiping = true;
+            swiped = false;
+        }
+
+        if (swiping && !gameManager.paused && speed != 0) {
+            Vector3 diff = Input.mousePosition - startMousePosition;
+            if (diff.y >= requiredDistanceForSwipe) {
+                jump();
+                swiped = true;
+                swiping = false;
+            }
+            else if (diff.y <= -requiredDistanceForSwipe) {
+                duck();
+                swiped = true;
+                swiping = false;
+            }
+            else if (!tapToPlay) {
+                if (diff.x >= requiredDistanceForSwipe && goingForward) {
+                    changeDirection();
+                    swiped = true;
+                    swiping = false;
+                }
+                else if (diff.x <= -requiredDistanceForSwipe && !goingForward) {
+                    changeDirection();
+                    swiped = true;
+                    swiping = false;
+                }
+            }
+        }
 
         // end of swipe or click
-        if (Input.GetMouseButtonUp(0)) {
-
+        if (Input.GetMouseButtonUp(0) && !swiped ) {
             if (speed == 0)
                 gameManager.tapToStart();
-            else if (!gameManager.paused)
-            {
-                float difference = Input.mousePosition.y - startMousePosition.y;
-                if (difference >= 15)
-                    jump();
-                else if (difference <= -15)
-                    duck();
-                else
-                    changeDirection();
+            else if (!gameManager.paused && tapToPlay) {
+                changeDirection();
             }
+            swiping = false;
             
         }
 
@@ -88,8 +118,6 @@ public class Car : MonoBehaviour {
             dyingCounter++;
 
         if (dyingCounter >= 70 || (died && dyingCounter >= 7)) {
-            
-            gameEnded = true;
             gameManager.endGame();
         }
     }
@@ -134,18 +162,12 @@ public class Car : MonoBehaviour {
             dying = true;
             died = true;
         }
-    /*    if (collision.gameObject.transform.name == "FinnishLine(Clone)") {
-
-            FindObjectOfType<LevelProgressionMeter>().setSliderToMax();
-            FindObjectOfType<GameManager>().endGame();
-        }
-    */            
+           
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if (collision.collider.tag == "Obstacle")
-        {
+        if (collision.collider.tag == "Obstacle") {
             dying = false;
             died = false;
             dyingCounter = 0;
@@ -160,5 +182,8 @@ public class Car : MonoBehaviour {
         speed = playerSpeed;
     }
 
+    public void switchToSwipeToPlay() {
+        tapToPlay = false;
+    }
 
 }
