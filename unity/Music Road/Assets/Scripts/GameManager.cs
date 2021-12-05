@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour {
         player = Instantiate(car, car.getStartingPosition(new Vector3(0, 0, startingDistance)), transform.rotation) as Car;
         FindObjectOfType<CameraMovement>().setPlayer(player);
         
-        player.switchToSwipeToPlay(tap);
+        player.setPlayStyle(tap);
     }
 
     public void tapToStart() {

@@ -184,7 +184,7 @@ public class Car : MonoBehaviour {
         speed = playerSpeed;
     }
 
-    public void switchToSwipeToPlay(bool tap) {
+    public void setPlayStyle(bool tap) {
         print("setting tap to false in switchToSwipeToPlay()");
         tapToPlay = tap;
     }
