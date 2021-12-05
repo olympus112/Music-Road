@@ -112,6 +112,19 @@ class TutorialState extends State<Tutorial> with SingleTickerProviderStateMixin 
         return;
       }
 
+      if (!await Backend.hasNetwork()) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Please turn on your internet.',
+              style: TextStyle(fontSize: 18, color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        );
+        return;
+      }
+
       final user = Hive.box(Globals.user);
       if (!user.containsKey(UserData.id)) {
         ScaffoldMessenger.of(context).showSnackBar(

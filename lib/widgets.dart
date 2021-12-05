@@ -25,7 +25,7 @@ class Widgets {
     );
   }
 
-  static Widget settings(BuildContext context, int index) {
+  static Widget settings(BuildContext context, int index, bool showVolumeSetting) {
     return Positioned(
       left: Globals.viewContentPadding,
       top: Globals.viewContentPadding,
@@ -35,7 +35,7 @@ class Widgets {
           dimension: 30 + 8,
           child: RawMaterialButton(
             elevation: 0,
-            onPressed: () => Widgets.showSettings(context, index),
+            onPressed: () => Widgets.showSettings(context, index, showVolumeSetting),
             shape: const CircleBorder(),
             child: Icon(
               Icons.settings,
@@ -86,12 +86,12 @@ class Widgets {
     );
   }
 
-  static void showSettings(BuildContext context, int index) {
+  static void showSettings(BuildContext context, int index, bool showVolumeSetting) {
     showDialog(
       context: context,
       barrierColor: Colors.black87,
       builder: (context) {
-        return SettingsDialog(index: index);
+        return SettingsDialog(index: index, showVolumeSetting: showVolumeSetting);
       },
     );
   }

@@ -69,6 +69,17 @@ class Statistics extends StatelessWidget {
     );
   }
 
+  String getMinutes(int? time) {
+    if (time == null) {
+      return '-';
+    } else {
+      String minutes = '${time ~/ 60}';
+      String seconds = '${time % 60}';
+      if (seconds.length == 1) seconds = '0$seconds';
+      return '$minutes:$seconds';
+    }
+  }
+
   Widget content(BuildContext context) {
     return Positioned(
       child: Padding(
@@ -86,11 +97,13 @@ class Statistics extends StatelessWidget {
                   children: [
                     Text('General', style: TextStyle(color: AppData.levelData[info.index].colors.text, fontSize: 25)),
                     Divider(color: AppData.levelData[info.index].colors.text),
+                    Statistic(statistic: 'Progress', value: box.getAt(info.index) != null ? (box.getAt(info.index)!.progress * 100).round().toString() + '%' : '-'),
                     Statistic(statistic: 'Score', value: box.getAt(info.index)?.score.toString() ?? '-'),
-                    Statistic(statistic: 'Minutes played', value: box.getAt(info.index)?.secondsPlayed.toString() ?? '-'),
+                    Statistic(statistic: 'Minutes played', value: getMinutes(box.getAt(info.index)?.secondsPlayed)),
                     Statistic(statistic: 'Times played', value: box.getAt(info.index)?.timesPlayed.toString() ?? '-'),
                     Statistic(statistic: 'Times won', value: box.getAt(info.index)?.timesWon.toString() ?? '-'),
                     Statistic(statistic: 'Times lost', value: box.getAt(info.index)?.timesLost.toString() ?? '-'),
+                    Statistic(statistic: 'Coins collected', value: box.getAt(info.index)?.totalCoins.toString() ?? '-'),
                     const SizedBox(height: 24),
                     Text('Song', style: TextStyle(color: AppData.levelData[info.index].colors.text, fontSize: 25)),
                     Divider(color: AppData.levelData[info.index].colors.text),

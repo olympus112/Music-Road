@@ -130,8 +130,8 @@ class Level extends StatelessWidget {
           valueListenable: Hive.box<UserLevelData>(Globals.levels).listenable(),
           builder: (context, Box<UserLevelData> box, child) {
             return LevelMedal(
-              score: box.getAt(info.index)?.score,
-              scores: AppData.levelData[info.index].percentages,
+              percentage: box.getAt(info.index)?.progress,
+              percentages: AppData.levelData[info.index].percentages,
             );
           },
         ),

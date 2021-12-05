@@ -8,19 +8,23 @@ class UserLevelDataAdapter extends TypeAdapter<UserLevelData> {
   @override
   UserLevelData read(BinaryReader reader) {
     final unlocked = reader.read();
+    final progress = reader.read();
     final score = reader.read();
     final timesPlayed = reader.read();
     final timesLost = reader.read();
     final timesWon = reader.read();
     final secondsPlayed = reader.read();
+    final totalCoins = reader.read();
 
     return UserLevelData(
       unlocked: unlocked ?? false,
+      progress: progress ?? 0.0,
       score: score ?? 0,
       timesPlayed: timesPlayed ?? 0,
       timesLost: timesLost ?? 0,
       timesWon: timesWon ?? 0,
       secondsPlayed: secondsPlayed ?? 0,
+      totalCoins: totalCoins ?? 0,
     );
   }
 
@@ -28,11 +32,13 @@ class UserLevelDataAdapter extends TypeAdapter<UserLevelData> {
   void write(BinaryWriter writer, UserLevelData obj) {
     writer
       ..write(obj.unlocked)
+      ..write(obj.progress)
       ..write(obj.score)
       ..write(obj.timesPlayed)
       ..write(obj.timesLost)
       ..write(obj.timesWon)
-      ..write(obj.secondsPlayed);
+      ..write(obj.secondsPlayed)
+      ..write(obj.totalCoins);
   }
 
   @override

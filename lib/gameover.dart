@@ -15,6 +15,7 @@ class GameOverDialog extends StatelessWidget {
   final String title;
   final int score;
   final int coins;
+  final bool highscore;
   final double percentage;
   final VoidCallback onMenu;
   final VoidCallback onReplay;
@@ -26,6 +27,7 @@ class GameOverDialog extends StatelessWidget {
     required this.score,
     required this.coins,
     required this.percentage,
+    required this.highscore,
     required this.onMenu,
     required this.onReplay,
   }) : super(key: key);
@@ -36,7 +38,7 @@ class GameOverDialog extends StatelessWidget {
       alignment: Alignment.topCenter,
       children: [
         content(context),
-        Widgets.settings(context, index),
+        Widgets.settings(context, index, true),
         Widgets.coins(),
       ],
     );
@@ -113,10 +115,10 @@ class GameOverDialog extends StatelessWidget {
               builder: (context, Box<UserLevelData> box, child) {
                 return LevelMedal(
                   size: 80,
-                  score: score,
-                  scores: AppData.levelData[index].percentages,
+                  percentage: percentage,
+                  percentages: AppData.levelData[index].percentages,
                   padding: const EdgeInsets.all(16),
-                  highscore: score > (box.getAt(index)?.score ?? double.infinity),
+                  highscore: highscore,
                 );
               },
             ),

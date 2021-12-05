@@ -47,7 +47,7 @@ class ViewState extends State<View> {
       for (final _ in AppData.levelData) FlipCardController(),
     ];
 
-    currentIndex = Hive.box(Globals.user).get(UserData.lastPlayed);
+    currentIndex = Hive.box(Globals.user).get(UserData.lastPlayed) + 1;
     currentTitle = getTitle(false);
     currentBackground = getBackground();
 
@@ -66,7 +66,7 @@ class ViewState extends State<View> {
             content(context),
             arrows(),
             Widgets.coins(),
-            Widgets.settings(context, currentIndex),
+            Widgets.settings(context, currentIndex, true),
           ],
         ),
       ),

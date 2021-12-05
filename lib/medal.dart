@@ -4,16 +4,16 @@ import 'package:musicroad/globals.dart';
 import 'package:musicroad/leveldata.dart';
 
 class LevelMedal extends StatefulWidget {
-  final int? score;
-  final LevelScores? scores;
+  final double? percentage;
+  final LevelScores? percentages;
   final double? size;
   final EdgeInsets padding;
   final bool highscore;
 
   const LevelMedal({
     Key? key,
-    required this.score,
-    required this.scores,
+    required this.percentage,
+    required this.percentages,
     this.size,
     this.padding = EdgeInsets.zero,
     this.highscore = false,
@@ -51,18 +51,18 @@ class LevelMedalState extends State<LevelMedal> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.score == null || widget.scores == null) return const SizedBox.shrink();
+    if (widget.percentage == null || widget.percentages == null) return const SizedBox.shrink();
 
-    Widget icon = widget.score! < widget.scores!.bronze
+    Widget icon = widget.percentage! < widget.percentages!.bronze
         ? Icon(
             Globals.noMedalIcon,
             color: Globals.noMedalColor,
             size: widget.size ?? Globals.medalSize,
           )
         : Image.asset(
-            widget.score! < widget.scores!.silver
+            widget.percentage! < widget.percentages!.silver
                 ? Globals.bronzeMedalPath
-                : widget.score! < widget.scores!.gold
+                : widget.percentage! < widget.percentages!.gold
                     ? Globals.silverMedalPath
                     : Globals.goldMedalPath,
             filterQuality: FilterQuality.medium,

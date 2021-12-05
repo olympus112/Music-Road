@@ -30,7 +30,7 @@ class PauzeDialog extends StatelessWidget {
       alignment: Alignment.topCenter,
       children: [
         content(context),
-        Widgets.settings(context, index),
+        Widgets.settings(context, index, false),
         Widgets.coins(),
       ],
     );

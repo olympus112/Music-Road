@@ -303,6 +303,14 @@ class SettingsDialog extends StatelessWidget {
           ),
         ],
       ),
+      Text(
+        'id: ${Hive.box(Globals.user).get(UserData.id)}',
+        style: TextStyle(color: AppData.levelData[index].colors.text),
+      ),
+      Text(
+        'last game: ${Hive.box(Globals.user).get(UserData.game)}',
+        style: TextStyle(color: AppData.levelData[index].colors.text),
+      ),
       ...controls(settings),
       const SizedBox(height: 100),
     ];
@@ -335,6 +343,7 @@ class VeryLongPressButtonState extends State<VeryLongPressButton> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onPanCancel: () => timer?.cancel(),
+      onTapCancel: () => timer?.cancel(),
       onPanDown: (_) => timer = Timer(widget.duration, widget.callback),
       child: widget.child,
     );

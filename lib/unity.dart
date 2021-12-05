@@ -9,6 +9,7 @@ import 'package:musicroad/backend.dart';
 import 'package:musicroad/gameover.dart';
 import 'package:musicroad/globals.dart';
 import 'package:musicroad/pauze.dart';
+import 'package:musicroad/review.dart';
 import 'package:musicroad/tutorial.dart';
 import 'package:musicroad/userdata.dart';
 import 'package:musicroad/view.dart';
@@ -94,13 +95,14 @@ class UnityPlayerState extends State<UnityPlayer> {
     // Get parameters
     bool won = json['won'];
     int coins = json['coins'];
-    double percentage = json['percentage'];
+    double percentage = won ? 1.0 : json['percentage'];
     int score = calculateScore(percentage, coins);
 
     // Get data for dialog
     final user = Hive.box(Globals.user);
     user.put(UserData.coins, user.get(UserData.coins) + coins);
     final lastPlayed = user.get(UserData.lastPlayed);
+    final level = Hive.box<UserLevelData>(Globals.levels).getAt(lastPlayed + 1)!;
 
     // Show gameover
     showGameOver(
@@ -109,15 +111,17 @@ class UnityPlayerState extends State<UnityPlayer> {
       score,
       coins,
       percentage,
+      percentage > level.progress,
     );
 
     // Update statistics
-    final level = Hive.box<UserLevelData>(Globals.levels).getAt(lastPlayed + 1)!;
+    level.progress = max(percentage, level.progress);
     level.score = max(score, level.score);
     level.timesPlayed += 1;
     level.timesLost += won ? 0 : 1;
     level.timesWon += won ? 1 : 0;
-    level.secondsPlayed += calculateSeconds(AppData.levelData[lastPlayed + 1].song.time);
+    level.secondsPlayed += (percentage * calculateSeconds(AppData.levelData[lastPlayed + 1].song.time)).toInt();
+    level.totalCoins += coins;
     level.save();
   }
 
@@ -154,13 +158,33 @@ class UnityPlayerState extends State<UnityPlayer> {
     );
 
     final settings = Hive.box(Globals.settings);
+    final levels = Hive.box<UserLevelData>(Globals.levels);
+    final user = Hive.box(Globals.user);
     if (settings.get(UserSettingsData.showTutorial)) {
-      showTutorial();
+      showTutorial(context);
       settings.put(UserSettingsData.showTutorial, false);
     }
+
+    final index = user.get(UserData.lastPlayed) + 1;
+    final level = levels.getAt(index);
+    int timesPlayed = level!.timesPlayed;
+    if (timesPlayed % 10 == 0 && timesPlayed != 0) showReview(context);
   }
 
-  void showTutorial() {
+  Future showReview(BuildContext context) async {
+    return showDialog(
+      barrierDismissible: false,
+      barrierColor: Colors.black,
+      context: context,
+      builder: (context) {
+        return const Review(
+          color: Color(0xff9481f0),
+        );
+      },
+    );
+  }
+
+  void showTutorial(BuildContext context) {
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.black,
@@ -172,7 +196,7 @@ class UnityPlayerState extends State<UnityPlayer> {
     );
   }
 
-  void showGameOver(int flutterIndex, String title, int score, int coins, double percentage) {
+  void showGameOver(int flutterIndex, String title, int score, int coins, double percentage, bool highscore) {
     final id = Hive.box(Globals.user).get(UserData.game);
     showDialog(
       barrierDismissible: false,
@@ -182,6 +206,7 @@ class UnityPlayerState extends State<UnityPlayer> {
         return GameOverDialog(
           index: flutterIndex,
           title: title,
+          highscore: highscore,
           score: score,
           coins: coins,
           percentage: percentage,
@@ -190,9 +215,15 @@ class UnityPlayerState extends State<UnityPlayer> {
             Backend.menuGame(id, percentage, ActionOrigin.gameover).then((_) => Backend.endGame(id, percentage, score, coins));
             showMenu(context);
           },
-          onReplay: () {
+          onReplay: () async {
             Navigator.pop(context);
             Backend.replayGame(id, percentage, ActionOrigin.gameover).then((_) => Backend.endGame(id, percentage, score, coins));
+
+            final index = Hive.box(Globals.user).get(UserData.lastPlayed) + 1;
+            final level = Hive.box<UserLevelData>(Globals.levels).getAt(index);
+            int timesPlayed = level!.timesPlayed;
+            if (timesPlayed % 10 == 0 && timesPlayed != 0) await showReview(context);
+
             unityStartLevel(flutterIndex - 1);
           },
         );
@@ -218,9 +249,15 @@ class UnityPlayerState extends State<UnityPlayer> {
             Backend.menuGame(id, percentage, ActionOrigin.pauze).then((value) => Backend.endGame(id, percentage, score, coins)).then((_) => Backend.endGame(id, percentage, score, coins));
             showMenu(context);
           },
-          onReplay: () {
+          onReplay: () async {
             Navigator.pop(context);
             Backend.replayGame(id, percentage, ActionOrigin.pauze).then((_) => Backend.endGame(id, percentage, score, coins));
+
+            final index = Hive.box(Globals.user).get(UserData.lastPlayed) + 1;
+            final level = Hive.box<UserLevelData>(Globals.levels).getAt(index);
+            int timesPlayed = level!.timesPlayed;
+            if (timesPlayed % 10 == 0 && timesPlayed != 0) await showReview(context);
+
             unityStartLevel(flutterIndex - 1);
           },
           onResume: () {
