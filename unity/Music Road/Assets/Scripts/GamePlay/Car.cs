@@ -54,7 +54,6 @@ public class Car : MonoBehaviour {
         dyingCounter = 0;
         swiped = false;
         swiping = false;
-        tapToPlay = true;
         gameEnded = false;
 
         transform.localScale = carDimensions;
@@ -185,8 +184,9 @@ public class Car : MonoBehaviour {
         speed = playerSpeed;
     }
 
-    public void switchToSwipeToPlay() {
-        tapToPlay = false;
+    public void switchToSwipeToPlay(bool tap) {
+        print("setting tap to false in switchToSwipeToPlay()");
+        tapToPlay = tap;
     }
 
 }

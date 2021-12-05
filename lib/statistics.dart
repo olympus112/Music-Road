@@ -99,7 +99,7 @@ class Statistics extends StatelessWidget {
                     Divider(color: AppData.levelData[info.index].colors.text),
                     Statistic(statistic: 'Progress', value: box.getAt(info.index) != null ? (box.getAt(info.index)!.progress * 100).round().toString() + '%' : '-'),
                     Statistic(statistic: 'Score', value: box.getAt(info.index)?.score.toString() ?? '-'),
-                    Statistic(statistic: 'Minutes played', value: getMinutes(box.getAt(info.index)?.secondsPlayed)),
+                    Statistic(statistic: 'Time played', value: getMinutes(box.getAt(info.index)?.secondsPlayed)),
                     Statistic(statistic: 'Times played', value: box.getAt(info.index)?.timesPlayed.toString() ?? '-'),
                     Statistic(statistic: 'Times won', value: box.getAt(info.index)?.timesWon.toString() ?? '-'),
                     Statistic(statistic: 'Times lost', value: box.getAt(info.index)?.timesLost.toString() ?? '-'),

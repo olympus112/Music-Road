@@ -180,6 +180,7 @@ class SettingsDialog extends StatelessWidget {
           fontSize: Globals.fontSize - 3,
           color: AppData.levelData[index].colors.text,
         ),
+        textAlign: TextAlign.center,
       );
     }
   }
