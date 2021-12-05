@@ -124,8 +124,9 @@ public class GameCreator : MonoBehaviour {
             relativeStartingPlaceOfcoins = -2;
         Vector3 direction = road.transform.localScale.x > road.transform.localScale.z ? Vector3.right : Vector3.forward;
         for (int i = relativeStartingPlaceOfcoins; i <= relativeStartingPlaceOfcoins * -1; i++) {
-            Vector3 coinPos = direction * i * distanceBetweenCoins + new Vector3(0,1.25f,0);
+            Vector3 coinPos = direction * i * distanceBetweenCoins;
             coinPos += road.transform.position;
+            coinPos.y = 0.75f;
             GameObject c = Instantiate(coin, coinPos, coin.transform.rotation);
 
             createdRoadSegments[createdRoadSegments.Count - 1].Add(c);
