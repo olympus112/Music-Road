@@ -33,6 +33,7 @@ public class Car : MonoBehaviour {
     private bool swiping;
     private bool swiped;
     private bool tapToPlay;
+    private bool gameEnded;
 
 
     //TODO : get the groundpos automatically here
@@ -54,6 +55,7 @@ public class Car : MonoBehaviour {
         swiped = false;
         swiping = false;
         tapToPlay = true;
+        gameEnded = false;
 
         transform.localScale = carDimensions;
     }
@@ -111,14 +113,15 @@ public class Car : MonoBehaviour {
         }
 
         // ------------------- Death trigger -------------------
-        if (transform.position.y < -0.5)
+        if (transform.position.y < -0.5 && !gameEnded)
             dying = true;
 
         if (dying)
             dyingCounter++;
 
-        if (dyingCounter >= 70 || (died && dyingCounter >= 7)) {
+        if ((dyingCounter >= 70 || (died && dyingCounter >= 7))&& gameEnded) {
             gameManager.endGame();
+            gameEnded = true;
         }
     }
 
