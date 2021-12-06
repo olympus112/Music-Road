@@ -113,7 +113,7 @@ class AppData {
 
   static Map<String, dynamic> defaultUserData = {
     UserData.coins: 0,
-    UserData.lastPlayed: 1,
+    UserData.lastPlayed: 0,
   };
 
   static void init() {

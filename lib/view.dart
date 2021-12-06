@@ -192,7 +192,15 @@ class ViewState extends State<View> {
   void onPlay(int flutterIndex) {
     // Convert to unity index
     bool random = flutterIndex == 0;
-    int unityIndex = random ? Random().nextInt(AppData.levelData.length - 1) : flutterIndex - 1;
+    int unityIndex = flutterIndex - 1;
+    if (random) {
+      final boughtLevels = [];
+      final levels = Hive.box<UserLevelData>(Globals.levels);
+      for (int i = 1; i < AppData.levelData.length; i++) if (levels.getAt(i)!.unlocked) boughtLevels.add(i - 1);
+
+      unityIndex = boughtLevels[Random(DateTime.now().millisecondsSinceEpoch).nextInt(boughtLevels.length)];
+    }
+
     Hive.box(Globals.user).put(UserData.lastPlayed, unityIndex);
 
     Navigator.of(context).pop();

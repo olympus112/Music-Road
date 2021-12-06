@@ -168,7 +168,7 @@ class UnityPlayerState extends State<UnityPlayer> {
     final index = user.get(UserData.lastPlayed) + 1;
     final level = levels.getAt(index);
     int timesPlayed = level!.timesPlayed;
-    if (timesPlayed == 10) showReview(context);
+    if (timesPlayed == 15) showReview(context);
   }
 
   Future showReview(BuildContext context) async {
@@ -222,7 +222,7 @@ class UnityPlayerState extends State<UnityPlayer> {
             final index = Hive.box(Globals.user).get(UserData.lastPlayed) + 1;
             final level = Hive.box<UserLevelData>(Globals.levels).getAt(index);
             int timesPlayed = level!.timesPlayed;
-            if (timesPlayed == 10) await showReview(context);
+            if (timesPlayed == 15) await showReview(context);
 
             unityStartLevel(flutterIndex - 1);
           },
@@ -256,7 +256,7 @@ class UnityPlayerState extends State<UnityPlayer> {
             final index = Hive.box(Globals.user).get(UserData.lastPlayed) + 1;
             final level = Hive.box<UserLevelData>(Globals.levels).getAt(index);
             int timesPlayed = level!.timesPlayed;
-            if (timesPlayed == 10) await showReview(context);
+            if (timesPlayed == 15) await showReview(context);
 
             unityStartLevel(flutterIndex - 1);
           },
