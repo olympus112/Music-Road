@@ -236,7 +236,6 @@ class ViewState extends State<View> {
               }
 
               currentTitle = getTitle(false);
-
               Navigator.pop(context);
             },
           ),
