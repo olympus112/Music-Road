@@ -318,19 +318,35 @@ class TutorialState extends State<Tutorial> with SingleTickerProviderStateMixin 
 
   PageViewModel thankYouPage(BuildContext context) {
     return PageViewModel(
-        titleWidget: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 32.0),
-          child: Text(
-            'Tutorial',
-            style: TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.bold,
-              color: widget.color,
-            ),
+      titleWidget: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32.0),
+        child: Text(
+          'Tutorial',
+          style: TextStyle(
+            fontSize: 36,
+            fontWeight: FontWeight.bold,
+            color: widget.color,
           ),
         ),
-        body: 'Thank you for correctly filling in the questionaire!\n\n'
-            'We will now show you a short tutorial on how to play the game.');
+      ),
+      bodyWidget: const Text.rich(
+        TextSpan(
+          style: TextStyle(fontSize: 18),
+          children: [
+            TextSpan(
+                text: 'Thank you for correctly filling in the questionaire!\n\n'
+                    'We will now show you a short tutorial on how to play the game.\n\n'),
+            TextSpan(
+              text: 'Please make sure you have an active internet connection while playing the game.\n\n'
+                  'Due to an internal error, the game will not work anymore if you exit the app '
+                  'and afterwards resume the app (e.g. by switching between your active apps).'
+                  'You can fix this by closing and restarting the app.',
+              style: TextStyle(color: Colors.red),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   PageViewModel controlTypePage(BuildContext context) {

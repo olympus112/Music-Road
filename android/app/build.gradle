@@ -54,6 +54,11 @@ android {
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        multiDexEnabled true
+        /*ndk {
+            abiFilters 'x86', 'armeabi-v7a'
+        }*/
     }
 
     lintOptions {
