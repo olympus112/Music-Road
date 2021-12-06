@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour {
 
     [SerializeField]
     float startingDistance = -6f;
+    
+    [SerializeField]
+    GameObject pauseButton;
 
     private static UnityMessageManager messenger;
     private AudioSource audioSource;
@@ -30,15 +33,12 @@ public class GameManager : MonoBehaviour {
     private GameObject currentlyLoadedLevel;
     private LevelLister levelList;
 
-    private GameObject pauseButton;
 
     private void Start() {
         print("GameManager::Start " + SceneManager.GetActiveScene().buildIndex);
 
         messenger = GetComponent<UnityMessageManager>();
         audioSource = GetComponent<AudioSource>();
-
-        pauseButton = gameCanvas.transform.Find("Button").gameObject;
 
         Time.timeScale = 0;
         paused = true;
@@ -95,8 +95,9 @@ public class GameManager : MonoBehaviour {
 
         player.setSpeed();
 
-        tapToStartCanvas.SetActive(false);
         pauseButton.SetActive(true);
+        tapToStartCanvas.SetActive(false);
+        
     }
 
     // Called from Unity
