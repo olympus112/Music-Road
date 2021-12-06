@@ -32,7 +32,7 @@ public class LavaPlane : MonoBehaviour
         if (risePercentage > 0 && transform.position.y <= maxHeight)
         {
             Vector3 pos = transform.position;
-            pos.y = slidingDistance * risePercentage * 1.5f + minHeight;
+            pos.y = slidingDistance * risePercentage * 1.0f + minHeight;
             transform.position = pos;
         }
         else if (firstUpdate)

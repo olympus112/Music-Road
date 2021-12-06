@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour {
         levelList = GetComponent<LevelLister>();
 
         if (!levelList || testing)
-            Restart();
+            Restart(2);
     }
 
     private void Restart(int index = 3, bool mute = false, bool tap = true) {
