@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -421,7 +421,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 46658d2b818efdb44a6519e0c6250ac2, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 9d35f9e34c574f443b217fc905b3d7f1, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -574,12 +574,12 @@ PrefabInstance:
     - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}
       propertyPath: frequencyOfBigCoinClusters
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 574136906117249998, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}
       propertyPath: frequencyOfSmallCoinClusters
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1383084002044499418, guid: db8b3ffbde15c1c40a427e454fef7d5e,
         type: 3}
