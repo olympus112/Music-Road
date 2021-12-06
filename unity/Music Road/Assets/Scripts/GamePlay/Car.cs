@@ -118,7 +118,7 @@ public class Car : MonoBehaviour {
         if (dying)
             dyingCounter++;
 
-        if ((dyingCounter >= 70 || (died && dyingCounter >= 7))&& !gameEnded) {
+        if ((dyingCounter >= 50 || (died && dyingCounter >= 8))&& !gameEnded) {
             gameManager.endGame();
             gameEnded = true;
         }
