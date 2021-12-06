@@ -45,4 +45,9 @@ public class LevelProgressionMeter : MonoBehaviour
     {
         distanceCovered = totalDistance;
     }
+
+    public float getValue()
+    {
+        return slider.value;
+    }
 }
