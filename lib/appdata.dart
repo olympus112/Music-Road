@@ -16,7 +16,7 @@ class AppData {
         album: '',
         released: '',
         time: '--:--',
-        price: 200,
+        price: 0,
         cover: 'images/random.jpg',
         icon: Icons.shuffle,
       ),
@@ -35,7 +35,7 @@ class AppData {
         released: '2020',
         time: '1:58',
         cover: 'images/sttr.jpg',
-        price: 300,
+        price: 0,
       ),
       difficulty: LevelDifficulty.easy,
       percentages: LevelScores(),
@@ -46,13 +46,30 @@ class AppData {
     ),
     LevelData(
       song: SongData(
+        title: 'A million questions',
+        artist: 'Ryan Exley',
+        album: 'Ragequit',
+        released: '2015',
+        time: '3:25',
+        cover: 'images/lives.jpg',
+        price: 100,
+      ),
+      difficulty: LevelDifficulty.medium,
+      percentages: LevelScores(),
+      colors: LevelColors(
+        text: Colors.white,
+        accent: Color(0xffde7c10),
+      ),
+    ),
+    LevelData(
+      song: SongData(
         title: 'Throwback',
         artist: 'Electro-Light',
         album: 'Throwback',
         released: '2016',
         time: '3:35',
         cover: 'images/dive.jpg',
-        price: 400,
+        price: 250,
       ),
       difficulty: LevelDifficulty.medium,
       percentages: LevelScores(),
@@ -65,11 +82,11 @@ class AppData {
       song: SongData(
         title: 'Sparkling Tides',
         artist: 'Wisp X',
-        album: '97 - Level Up',
+        album: 'Level Up',
         released: '2015',
         time: '2:52',
         cover: 'images/numb.jpg',
-        price: 150,
+        price: 350,
       ),
       difficulty: LevelDifficulty.hard,
       percentages: LevelScores(),
@@ -85,6 +102,7 @@ class AppData {
     UserLevelData.unlocked(),
     UserLevelData.locked(),
     UserLevelData.locked(),
+    UserLevelData.locked(),
   ];
 
   static Map<String, dynamic> defaultUserSettingsData = {
@@ -94,7 +112,7 @@ class AppData {
   };
 
   static Map<String, dynamic> defaultUserData = {
-    UserData.coins: 550,
+    UserData.coins: 0,
     UserData.lastPlayed: 1,
   };
 
