@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: 71862040086836a4989659762121cf5f,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -597,13 +597,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Levels:
   - {fileID: 2470349825061415793, guid: 470ff487caf4fc0419ca28e3cf99b356, type: 3}
-  - {fileID: 5768768162946922010, guid: 62ef1d8e9f855c14ca58cb19318efb0f, type: 3}
   - {fileID: 7871586643731549130, guid: e9f77f3ca328e2a4c86b3423d542c00a, type: 3}
+  - {fileID: 5768768162946922010, guid: 62ef1d8e9f855c14ca58cb19318efb0f, type: 3}
   - {fileID: 4187276566198763671, guid: d64c08cdcfa5e03408128e9471095a92, type: 3}
   Songs:
   - {fileID: 8300000, guid: 46658d2b818efdb44a6519e0c6250ac2, type: 3}
-  - {fileID: 8300000, guid: 6fb40071386cc184bafc4901874cd238, type: 3}
   - {fileID: 8300000, guid: 7080c753d5fe1bb49a644827d8f4a721, type: 3}
+  - {fileID: 8300000, guid: 6fb40071386cc184bafc4901874cd238, type: 3}
   - {fileID: 8300000, guid: 9d35f9e34c574f443b217fc905b3d7f1, type: 3}
 --- !u!114 &1199069055 stripped
 MonoBehaviour:
@@ -973,6 +973,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293093980191221372, guid: f1d9298f39b9e1641bc1eaab546f5637,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293093980191221372, guid: f1d9298f39b9e1641bc1eaab546f5637,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293093980191221372, guid: f1d9298f39b9e1641bc1eaab546f5637,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1d9298f39b9e1641bc1eaab546f5637, type: 3}
