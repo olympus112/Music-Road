@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour {
             Restart();
     }
 
-    private void Restart(int index = 2, bool mute = false, bool tap = true) {
+    private void Restart(int index = 3, bool mute = false, bool tap = true) {
         print("GamerManager::Restart " + index);
         
         Time.timeScale = 1;

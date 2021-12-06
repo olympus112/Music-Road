@@ -29,17 +29,20 @@ public class LavaPlane : MonoBehaviour
     void Update()
     {
         float risePercentage = slider.getValue();
-        if(risePercentage > 0 && transform.position.y <= maxHeight) {
+        if (risePercentage > 0 && transform.position.y <= maxHeight)
+        {
             Vector3 pos = transform.position;
-            pos.y = slidingDistance * risePercentage *1.5f + minHeight;
+            pos.y = slidingDistance * risePercentage * 1.5f + minHeight;
             transform.position = pos;
         }
-        else if (firstUpdate) {
+        else if (firstUpdate)
+        {
             Vector3 pos = transform.position;
             pos.y = minHeight;
-            print(minHeight);
             transform.position = pos;
             firstUpdate = false;
         }
+        else if (transform.position.y > 0)
+            firstUpdate = true;
     }
 }

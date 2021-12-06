@@ -11,8 +11,8 @@ public class RoadGroup : MonoBehaviour
     {
         amountOfChildren  = transform.childCount;
         LevelProgressionMeter slider = FindObjectOfType<LevelProgressionMeter>();
-        print(slider);
         slider.setTotalDistance(getTotalDistance());
+        print("total distance: ");
         print(getTotalDistance());
     }
 
