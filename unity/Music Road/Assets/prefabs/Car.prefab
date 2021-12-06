@@ -111,6 +111,7 @@ MonoBehaviour:
   playerSpeed: 15
   jumpVelocity: 15
   carDimensions: {x: 1.5, y: 1.5, z: 1.5}
+  requiredDistanceForSwipe: 40
 --- !u!54 &-6266495446216094849
 Rigidbody:
   m_ObjectHideFlags: 0
