@@ -49,13 +49,13 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.musicroad"
+        applicationId "com.matrilas.musicroad"
         minSdkVersion 19
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
 
-        multiDexEnabled true
+        //multiDexEnabled true
         /*ndk {
             abiFilters 'x86', 'armeabi-v7a'
         }*/
@@ -76,6 +76,7 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
+//            signingConfig signingConfigs.debug
         }
     }
 }
